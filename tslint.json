@@ -12,6 +12,9 @@
       "check-format",
       "allow-pascal-case",
       "allow-leading-underscore"
-    ]
+    ],
+    "quotemark": [ true, "single", "avoid-escape" ],
+    "semicolon": [ true, "never" ],
+    "trailing-comma": [ true, { "multiline": "never", "singleLine": "never"} ]
   }
 }
