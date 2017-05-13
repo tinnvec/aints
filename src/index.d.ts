@@ -1,12 +1,11 @@
 interface Memory {
-  uuid: number;
-  log: any;
+  log: any
 }
 
 declare function require(path: string): any;
 
 interface Global {
-  log: any;
+  log: any
 }
 
 declare var global: Global;
