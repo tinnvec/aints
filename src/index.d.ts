@@ -2,4 +2,4 @@ interface Memory {
   log: any
 }
 
-declare var __REVISION__: string;
+declare const __REVISION__: string;
