@@ -3,6 +3,7 @@ import * as Config from './config/config'
 import * as Profiler from 'screeps-profiler'
 import { log } from './lib/logger/log'
 
+import './components/Room'
 import './components/Structure'
 import './components/StructureSpawn'
 
@@ -27,10 +28,19 @@ function mloop() {
 
   }
 
+  for (const name in Memory.rooms) {
+    if (!Game.rooms[name]) {
+      log.info(`Clearing non-existing room from memory: ${name}`)
+      Memory.rooms[name] = undefined
     }
   }
+
   // Run all game objects
+  _.invoke(Game.rooms, 'run')
   _.invoke(Game.structures, 'run')
+
+  // Draw Rooms
+  _.invoke(Game.rooms, 'draw')
 }
 
 /**

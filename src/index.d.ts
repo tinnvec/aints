@@ -4,6 +4,18 @@ interface Memory {
 }
 
 declare const __REVISION__: string;
+
+
+// --- Interfaces ---
+
+interface Room {
+  readonly pheromoneNetwork: PheromoneNetwork
+
+  _pheromoneNetwork?: PheromoneNetwork
+
+  getWalkableTerrainAt(x: number, y: number, ignoreCreeps?: boolean): boolean
+}
+
 interface Structure {
   memory: any
 
