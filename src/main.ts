@@ -3,6 +3,7 @@ import * as Config from './config/config'
 import * as Profiler from 'screeps-profiler'
 import { log } from './lib/logger/log'
 
+import './components/Creep'
 import './components/Room'
 import './components/Structure'
 import './components/StructureSpawn'
@@ -26,6 +27,11 @@ function mloop() {
     }
   }
 
+  for (const name in Memory.creeps) {
+    if (!Game.creeps[name]) {
+      log.info(`Clearing non-existing creep from memory: ${name}`)
+      Memory.creeps[name] = undefined
+    }
   }
 
   for (const name in Memory.rooms) {
@@ -37,6 +43,7 @@ function mloop() {
 
   // Run all game objects
   _.invoke(Game.rooms, 'run')
+  _.invoke(Game.creeps, 'run')
   _.invoke(Game.structures, 'run')
 
   // Draw Rooms
