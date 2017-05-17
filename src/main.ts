@@ -1,17 +1,19 @@
+import * as Config from './config/config'
 
-import * as Profiler from "screeps-profiler";
-import { log } from "./lib/logger/log";
+import * as Profiler from 'screeps-profiler'
+import { log } from './lib/logger/log'
 
 // This is an example for using a config variable from `config.ts`.
 // NOTE: this is used as an example, you may have better performance
 // by setting USE_PROFILER through webpack, if you want to permanently
-if (Config.USE_PROFILER) {
-// Start the profiler
 // remove it on deploy
-  Profiler.enable();
+// Start the profiler
+if (Config.USE_PROFILER) {
+  Profiler.enable()
 }
 
-log.info(`loading revision: ${ __REVISION__ }`);
+log.info(`loading revision: ${ __REVISION__ }`)
+
 function mloop() {
 
   }
