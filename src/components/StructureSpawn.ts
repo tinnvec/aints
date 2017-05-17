@@ -1,5 +1,3 @@
-// import PheromoneNetwork from './PheromoneNetwork'
-
 // --- Constants ---
 
 const CREEP_BODY = [MOVE, WORK, CARRY, MOVE]
