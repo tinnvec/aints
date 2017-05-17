@@ -11,8 +11,8 @@ function webpackConfig(options: EnvOptions = {}): Config {
   const config = CommonConfig.init(options)
 
   // make "dev" specific changes here
-  credentials.branch = "dev";
   const credentials: Credentials = require('./credentials.json')
+  credentials.branch = 'develop'
 
   config.plugin('screeps')
     .use(ScreepsWebpackPlugin, [credentials])
