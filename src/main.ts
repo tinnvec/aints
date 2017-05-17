@@ -28,4 +28,4 @@ function mloop() {
  *
  * @export
  */
-export const loop = !Config.USE_PROFILER ? mloop : Profiler.wrap(mloop);
+export const loop = !Config.USE_PROFILER ? mloop : Profiler.wrap(mloop)
