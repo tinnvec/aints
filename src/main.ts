@@ -3,6 +3,9 @@ import * as Config from './config/config'
 import * as Profiler from 'screeps-profiler'
 import { log } from './lib/logger/log'
 
+import './components/Structure'
+import './components/StructureSpawn'
+
 // This is an example for using a config variable from `config.ts`.
 // NOTE: this is used as an example, you may have better performance
 // by setting USE_PROFILER through webpack, if you want to permanently
@@ -15,11 +18,19 @@ if (Config.USE_PROFILER) {
 log.info(`loading revision: ${ __REVISION__ }`)
 
 function mloop() {
+  for (const name in Memory.structures) {
+    if (!Game.structures[name]) {
+      log.info(`Clearing non-existing structure from memory: ${name}`)
+      Memory.structures[name] = undefined
+    }
+  }
 
   }
 
     }
   }
+  // Run all game objects
+  _.invoke(Game.structures, 'run')
 }
 
 /**
