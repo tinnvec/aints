@@ -1,9 +1,15 @@
-AInts
+AInts (WIP)
 ===
 
-Screeps AI using Ant behavior as a model.
+Screeps AI using ants and other social colony insects as a model.
 
-Outline
+Searching
+===
+
+  1. Deposit pheromone if last move was successful
+  2. Move to nearby tile with least deposit pheromone and most search pheromone
+
+Ideas Sketches
 ===
 
 - Spawn
@@ -20,7 +26,7 @@ Outline
     3. At MST, switch to homing, even if no energy found
 
   - Carrying Energy / Homing
-    1. Increase EP at current position by Max(lowest EP of neighboring locations, MaxPossiblePheromone / DistanceFromSource)
+    1. Increase EP at current position by Min(lowest EP of neighboring locations, MaxPossiblePheromone / DistanceFromSource)
       - Combine with source size?
     2. Move to neighboring location with lowest value of (EP - (2 * SP)) combined with DistanceFromSpawn
     3. Feed spawn with available capacity
@@ -31,9 +37,6 @@ Outline
   - EP = Energy Pheromone
   - SP = Spawn Pheromone
   - MST = Max Search Time
-
-Ideas
-===
 
 Articles
 ===
