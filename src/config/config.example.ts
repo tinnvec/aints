@@ -1,5 +1,18 @@
 import { LogLevels } from '../lib/logger/logLevels'
 
+/* --- AInts Specific Config --- */
+
+// Searching
+export const MAX_SEARCH_STEPS: number = 50
+
+// Pheromones
+export const MAX_TILE_PHEROMONE_LEVEL: number = 255
+export const MIN_PHEROMONE_DEPOSIT_LEVEL: number = 15
+export const PHEROMONE_DEPOSIT_RATE: number =
+  Math.floor((MAX_TILE_PHEROMONE_LEVEL - MIN_PHEROMONE_DEPOSIT_LEVEL) / MAX_SEARCH_STEPS)
+
+/* --- Default Config --- */
+
 /**
  * Enable this if you want a lot of text to be logged to console.
  * @type {boolean}

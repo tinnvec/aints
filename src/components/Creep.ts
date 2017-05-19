@@ -1,9 +1,5 @@
+import * as Config from '../config/config'
 import LookTile from './LookTile'
-
-
-const MAX_TILE_PHEROMONE_LEVEL: number = 255
-const MAX_SEARCH_STEPS: number = 50
-const PHEROMONE_DEPOSIT_RATE: number = Math.floor(MAX_TILE_PHEROMONE_LEVEL / MAX_SEARCH_STEPS)
 
 // --- Properties ---
 
@@ -182,7 +178,7 @@ Creep.prototype.getCurrentLocationPheromoneLevel = function(this: Creep, type: s
 Creep.prototype.depositPheromone = function(this: Creep): number {
   if (this.currentDepositPheromone === undefined) { return 0 }
   const currentDepositLevel = this.getCurrentLocationPheromoneLevel(this.currentDepositPheromone)
-  const maxDepositAmount = (MAX_SEARCH_STEPS - this.stepsFromLastSite) * PHEROMONE_DEPOSIT_RATE
+  const maxDepositAmount = Config.MAX_TILE_PHEROMONE_LEVEL - (this.stepsFromLastSite * Config.PHEROMONE_DEPOSIT_RATE)
   const depositAmount = Math.max(0, maxDepositAmount - currentDepositLevel)
   if (depositAmount <= 0) { return 0 }
   this.room.pheromoneNetwork.increaseLevel(this.currentDepositPheromone, this.pos.x, this.pos.y, depositAmount)
