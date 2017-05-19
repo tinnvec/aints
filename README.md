@@ -44,3 +44,5 @@ Screeps AI using ants and other social colony insects as a model.
 - http://www.antwiki.org/wiki/Foraging_behaviors_in_Poneroids_and_Ectatomminae
 - http://mute-net.sourceforge.net/howAnts.shtml
 - http://natureofcode.com/book
+- [Composite collective decision-making](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4590433/)
+- http://www.huffingtonpost.com/marc-bekoff/study-rats-empathy_b_1138675.html
