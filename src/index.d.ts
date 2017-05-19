@@ -39,6 +39,16 @@ interface Creep {
   searchMove(): boolean
 }
 
+interface LookTile {
+  constructionSites: { [structureType: string]: ConstructionSite[] }
+  creeps: Creep[]
+  pheromones: { [type: string]: number }
+  sources: Source[]
+  structures: { [structureType: string]: Structure[] }
+  terrain: string[]
+  isWalkable(ignoreCreeps?: boolean): boolean
+}
+
 interface PheromoneNetwork {
   layers: { [type: string]: CostMatrix }
 
