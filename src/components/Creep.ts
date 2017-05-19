@@ -1,16 +1,5 @@
-// --- Constants ---
+import LookTile from './LookTile'
 
-const DIRECTIONS = [
-  8,   1,   2,
-  7, /*C*/  3,
-  6,   5,   4
-]
-
-const DIRECTION_COORDINATE_DELTAS: { [dir: number]: [number, number] } = {
-  8: [-1, -1],  1: [0, -1],  2: [1, -1],
-  7: [-1, 0],   /*Center*/   3: [1, 0],
-  6: [-1, 1],   5: [0, 1],   4: [1, 1]
-}
 
 const MAX_TILE_PHEROMONE_LEVEL: number = 255
 const MAX_SEARCH_STEPS: number = 50
@@ -44,27 +33,6 @@ Object.defineProperty(Creep.prototype, 'currentSourceId', {
   },
   set(this: Creep, value: string | undefined) {
     this.memory.currentSourceId = value
-  }
-})
-
-Object.defineProperty(Creep.prototype, 'directionPheromoneLevels', {
-  configurable: true,
-  get(this: Creep) {
-    if (this._directionPheromoneLevels === undefined) {
-      this._directionPheromoneLevels = []
-      for (const dir of DIRECTIONS) {
-        const [dx, dy] = DIRECTION_COORDINATE_DELTAS[dir]
-        const nx = dx + this.pos.x
-        const ny = dy + this.pos.y
-        if (this.room.getWalkableTerrainAt(nx, ny, Math.random() > (this.isCarryingEnergy ? 0.33 : 0.67))) {
-          const searchPheromoneLevel = this.getLocationPheromoneLevel(this.currentSearchPheromone, nx, ny)
-          const depositPheromoneLevel = this.currentDepositPheromone === undefined ? 0 :
-              this.getLocationPheromoneLevel(this.currentDepositPheromone, nx, ny)
-          this._directionPheromoneLevels.push({ dir, depositPheromoneLevel, searchPheromoneLevel })
-        }
-      }
-    }
-    return this._directionPheromoneLevels
   }
 })
 
@@ -105,6 +73,29 @@ Object.defineProperty(Creep.prototype, 'lastPheromoneDepositAmount', {
   },
   set(this: Creep, value: number) {
     this.memory.lastPheromoneDepositAmount = value
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'nearbyTiles', {
+  configurable: true,
+  get(this: Creep) {
+    if (this._nearbyTiles === undefined) {
+      this._nearbyTiles = []
+      const DIRECTION_COORDINATE_DELTAS: { [dir: number]: [number, number] } = {
+        8: [-1, -1],  1: [0, -1],  2: [1, -1],
+        7: [-1, 0],   /*Center*/   3: [1, 0],
+        6: [-1, 1],   5: [0, 1],   4: [1, 1]
+      }
+      const {x, y} = this.pos
+      for (const dir in DIRECTION_COORDINATE_DELTAS) {
+        const [dx, dy] = DIRECTION_COORDINATE_DELTAS[dir]
+        const nx = x + dx
+        const ny = y + dy
+        if (nx < 0 || ny < 0 || nx > 49 || ny > 49) { continue }
+        this._nearbyTiles.push({ dir: parseInt(dir, 10), tile: new LookTile(nx, ny, this.room.name) })
+      }
+    }
+    return this._nearbyTiles
   }
 })
 
@@ -177,8 +168,6 @@ Creep.prototype.depositPheromone = function(this: Creep): number {
   return depositAmount
 }
 
-Creep.prototype.getLocationPheromoneLevel = function(this: Creep, type: string, x: number, y: number): number {
-  return this.room.pheromoneNetwork.getLevel(type, x, y)
 }
 
 Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {

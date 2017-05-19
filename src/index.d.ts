@@ -16,11 +16,9 @@ type DirectionPheromoneLevels = {
 // --- Interfaces ---
 
 interface Creep {
-  _directionPheromoneLevels?: DirectionPheromoneLevels[]
-
+  _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
   readonly isCarryingEnergy: boolean
-  readonly directionPheromoneLevels: DirectionPheromoneLevels[]
-
+  readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
   currentDepositPheromone: string | undefined
   currentSearchPheromone: string
   currentSourceId: string | undefined
@@ -34,7 +32,6 @@ interface Creep {
 
   depositPheromone(): number
   getCurrentLocationPheromoneLevel(type: string): number
-  getLocationPheromoneLevel(type: string, x: number, y: number): number
   getSearchPheromoneDirection(): number
   searchMove(): boolean
 }
@@ -63,8 +60,6 @@ interface Room {
   readonly pheromoneNetwork: PheromoneNetwork
 
   _pheromoneNetwork?: PheromoneNetwork
-
-  getWalkableTerrainAt(x: number, y: number, ignoreCreeps?: boolean): boolean
 }
 
 interface Structure {
