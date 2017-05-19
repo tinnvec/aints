@@ -121,9 +121,9 @@ Object.defineProperty(Creep.prototype, 'stepsFromLastSite', {
 
 Creep.prototype.run = function(this: Creep) {
   if (this.spawning) { return }
+
   // Check for max search length
   if (this.isSearching && this.stepsFromLastSite >= Config.MAX_SEARCH_STEPS) { this.isSearching = false }
-
   // Check for spawn
   if (this.nearbySpawn !== undefined) {
     this.transfer(this.nearbySpawn, RESOURCE_ENERGY)
@@ -183,19 +183,15 @@ Creep.prototype.getDirectionPriorities = function(this: Creep): number[] {
 
 Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
   const directionPriorities = this.getDirectionPriorities()
-  return _.min(this.nearbyTiles
-    .filter(({ dir, tile }) =>
-      directionPriorities.indexOf(dir) !== -1 &&
-      tile.isWalkable(this.isCarryingEnergy ? true : Math.random() < 0.5)
-    )
+  return _(this.nearbyTiles)
+    .filter(({ dir, tile }) => directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(this.isCarryingEnergy))
     .sort((a, b) => directionPriorities.indexOf(a.dir) - directionPriorities.indexOf(b.dir))
     .map(({ dir, tile }) => {
       const depositPheromoneLevel = this.currentDepositPheromone !== undefined ?
         tile.pheromones[this.currentDepositPheromone] : 0
       const searchPheromoneLevel = tile.pheromones[this.currentSearchPheromone]
       return { dir, level: depositPheromoneLevel - (2 * searchPheromoneLevel) }
-    }),
-    ({ level }) => level).dir
+    }).min(({ level }) => level).dir
 }
 
 Creep.prototype.searchMove = function(this: Creep): boolean {
