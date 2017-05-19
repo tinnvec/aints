@@ -64,16 +64,6 @@ Object.defineProperty(Creep.prototype, 'lastDirection', {
   }
 })
 
-Object.defineProperty(Creep.prototype, 'lastPheromoneDepositAmount', {
-  configurable: true,
-  get(this: Creep) {
-    return this.memory.lastPheromoneDepositAmount
-  },
-  set(this: Creep, value: number) {
-    this.memory.lastPheromoneDepositAmount = value
-  }
-})
-
 Object.defineProperty(Creep.prototype, 'nearbySource', {
   configurable: true,
   get(this: Creep) {
