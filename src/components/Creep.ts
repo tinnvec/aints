@@ -26,15 +26,8 @@ Object.defineProperty(Creep.prototype, 'currentSearchPheromone', {
   }
 })
 
-Object.defineProperty(Creep.prototype, 'currentSourceId', {
   configurable: true,
   get(this: Creep) {
-    return this.memory.currentSourceId
-  },
-  set(this: Creep, value: string | undefined) {
-    this.memory.currentSourceId = value
-  }
-})
   }
 })
 
@@ -68,6 +61,17 @@ Object.defineProperty(Creep.prototype, 'lastPheromoneDepositAmount', {
   },
   set(this: Creep, value: number) {
     this.memory.lastPheromoneDepositAmount = value
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'nearbySource', {
+  configurable: true,
+  get(this: Creep) {
+    const sourceTile = _.find(
+      this.nearbyTiles,
+      ({ tile }) => (tile.sources || []).length > 0 && _.every(tile.sources, (source) => source.energy > 0)
+    )
+    if (sourceTile !== undefined) { return _.first(sourceTile.tile.sources) }
   }
 })
 
