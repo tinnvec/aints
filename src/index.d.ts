@@ -5,43 +5,40 @@ interface Memory {
 
 declare const __REVISION__: string;
 
-// --- Types ---
-
-type DirectionPheromoneLevels = {
-  dir: number
-  depositPheromoneLevel: number
-  searchPheromoneLevel: number
-}
-
 // --- Interfaces ---
 
 interface Creep {
-  _directionPheromoneLevels?: DirectionPheromoneLevels[]
-
+  _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
   readonly isCarryingEnergy: boolean
-  readonly directionPheromoneLevels: DirectionPheromoneLevels[]
-
+  readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
   currentDepositPheromone: string | undefined
   currentSearchPheromone: string
-  currentSourceId: string | undefined
-  homePosition: RoomPosition
+  isHarvesting: boolean
   isSearching: boolean
   lastMoveWasSuccessful: boolean
-  lastPheromoneDepositAmount: number
+  lastDirection?: number
+  nearbySource?: Source
+  nearbySpawn?: Spawn
   stepsFromLastSite: number
-
   run(): void
-
   depositPheromone(): number
-  getCurrentLocationPheromoneLevel(type: string): number
-  getLocationPheromoneLevel(type: string, x: number, y: number): number
+  getDirectionPriorities(): number[]
   getSearchPheromoneDirection(): number
   searchMove(): boolean
 }
 
+interface LookTile {
+  constructionSites: { [structureType: string]: ConstructionSite[] }
+  creeps: Creep[]
+  pheromones: { [type: string]: number }
+  sources: Source[]
+  structures: { [structureType: string]: Structure[] }
+  terrain: string[]
+  isWalkable(ignoreCreeps?: boolean): boolean
+}
+
 interface PheromoneNetwork {
   layers: { [type: string]: CostMatrix }
-
   dissipate(): void
   draw(type: string, color?: string): void
   getLevel(type: string, x: number, y: number): number
@@ -50,15 +47,11 @@ interface PheromoneNetwork {
 }
 
 interface Room {
-  readonly pheromoneNetwork: PheromoneNetwork
-
   _pheromoneNetwork?: PheromoneNetwork
-
-  getWalkableTerrainAt(x: number, y: number, ignoreCreeps?: boolean): boolean
+  readonly pheromoneNetwork: PheromoneNetwork
 }
 
 interface Structure {
   memory: any
-
   run(): void
 }
