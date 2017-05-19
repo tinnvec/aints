@@ -29,9 +29,7 @@ interface Creep {
   nearbySource?: Source
   nearbySpawn?: Spawn
   stepsFromLastSite: number
-
   run(): void
-
   depositPheromone(): number
   getDirectionPriorities(): number[]
   getSearchPheromoneDirection(): number
@@ -50,7 +48,6 @@ interface LookTile {
 
 interface PheromoneNetwork {
   layers: { [type: string]: CostMatrix }
-
   dissipate(): void
   draw(type: string, color?: string): void
   getLevel(type: string, x: number, y: number): number
@@ -59,13 +56,11 @@ interface PheromoneNetwork {
 }
 
 interface Room {
-  readonly pheromoneNetwork: PheromoneNetwork
-
   _pheromoneNetwork?: PheromoneNetwork
+  readonly pheromoneNetwork: PheromoneNetwork
 }
 
 interface Structure {
   memory: any
-
   run(): void
 }
