@@ -13,6 +13,7 @@ interface Creep {
   readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
   currentDepositPheromone: string | undefined
   currentSearchPheromone: string
+  directionPriorities: number[]
   isHarvesting: boolean
   isSearching: boolean
   lastMoveWasSuccessful: boolean
@@ -22,7 +23,6 @@ interface Creep {
   stepsFromLastSite: number
   run(): void
   depositPheromone(): number
-  getDirectionPriorities(): number[]
   getSearchPheromoneDirection(): number
   searchMove(): boolean
 }
