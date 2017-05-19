@@ -1,45 +1,36 @@
-AInts (WIP)
-===
+# AInts (WIP)
 
 Screeps AI using ants and other social colony insects as a model.
 
-Searching
-===
+## Foraging
 
-  1. Deposit pheromone if last move was successful
-  2. Move to nearby tile with least deposit pheromone and most search pheromone
+1. Check Surroundings
+    - Spawn Exists
+      - Creep not empty - Transfer energy to spawn
+      - Creep empty - Switch to search mode
+    - Source Exits
+      - Creep not full - Harvest energy
+      - Creep full - Switch to homing mode
+2. Deposit Pheromone
+    - Amount - increase level to `(Max level - steps from last site) * per-step change`
+      - Max level - `CostMatrix` max value (255)
+      - Min level - Enough that the pheromone won't decay completely within longest action time (ie. harvesting)
+      - Per-step change - `(max level - min level) / max search length`
+    - Pheromone type
+      - Search Mode - homing pheromone
+      - Homing Mode - previous search pheromone.
+        - If max search steps was reached, don't deposit pheromones while homing
+3. Move
+    - Don't move if harvesting
+    - Move to tile with lowest value for `deposit pheromone - (2 * search pheromone)`
 
-Ideas Sketches
-===
+## Spawning
 
-- Spawn
-  - Pheromone sensing range?
-  - Secrete SP?
-  - Creating Creeps
-    - Min foragers (2?)
-    - Increase max foragers with more EP nearby
+- Spawn as many creeps as possible
 
-- Forager Creep
-  - Not Carrying Energy / Hunting
-    1. Increase SP at current position by Max(lowest SP of neighboring locations, MaxPossiblePheromone / DistanceFromSpawn)
-    2. Move to neighboring location with lowest value of (SP - (2 * EP))
-    3. At MST, switch to homing, even if no energy found
+---
 
-  - Carrying Energy / Homing
-    1. Increase EP at current position by Min(lowest EP of neighboring locations, MaxPossiblePheromone / DistanceFromSource)
-      - Combine with source size?
-    2. Move to neighboring location with lowest value of (EP - (2 * SP)) combined with DistanceFromSpawn
-    3. Feed spawn with available capacity
-    4. Fill container/storage with available capacity
-      - Recruit others for group harvesting if source is large enough/has enough access?
-
-- Key
-  - EP = Energy Pheromone
-  - SP = Spawn Pheromone
-  - MST = Max Search Time
-
-Articles
-===
+## Articles
 
 - https://en.wikipedia.org/wiki/Ant
 - [Swarm Intelligence](https://en.wikipedia.org/wiki/Swarm_intelligence)
