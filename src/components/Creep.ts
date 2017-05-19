@@ -232,7 +232,16 @@ Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
 }
 
 Creep.prototype.searchMove = function(this: Creep): boolean {
-  const moveSuccess = this.move(this.getSearchPheromoneDirection()) === OK
-  if (moveSuccess) { this.stepsFromLastSite++ }
-  return moveSuccess
+  if (this.fatigue > 0 && this.lastMoveWasSuccessful) {
+    this.stepsFromLastSite += Math.floor(this.fatigue / 2)
+    return false
+  }
+  const dir = this.getSearchPheromoneDirection()
+  if (this.move(dir) === OK) {
+    this.lastDirection = dir
+    this.stepsFromLastSite++
+    return true
+  }
+  this.lastDirection = undefined
+  return false
 }
