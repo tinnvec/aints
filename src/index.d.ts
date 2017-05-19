@@ -33,6 +33,7 @@ interface Creep {
 
   depositPheromone(): number
   getCurrentLocationPheromoneLevel(type: string): number
+  getDirectionPriorities(): number[]
   getSearchPheromoneDirection(): number
   searchMove(): boolean
 }

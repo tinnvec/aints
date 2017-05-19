@@ -187,6 +187,35 @@ Creep.prototype.depositPheromone = function(this: Creep): number {
   return depositAmount
 }
 
+Creep.prototype.getDirectionPriorities = function(this: Creep): number[] {
+  switch (this.lastDirection) {
+    case TOP:
+      return (_.shuffle([TOP, TOP_LEFT, TOP_RIGHT]) as number[])
+        .concat(_.shuffle([LEFT, RIGHT]), _.shuffle([BOTTOM_LEFT, BOTTOM_RIGHT]))
+    case TOP_LEFT:
+      return (_.shuffle([TOP_LEFT, LEFT, TOP]) as number[])
+        .concat(_.shuffle([BOTTOM_LEFT, TOP_RIGHT]), _.shuffle([BOTTOM, RIGHT]))
+    case LEFT:
+      return (_.shuffle([LEFT, BOTTOM_LEFT, TOP_LEFT]) as number[])
+        .concat(_.shuffle([BOTTOM, TOP]), _.shuffle([BOTTOM_RIGHT, TOP_RIGHT]))
+    case BOTTOM_LEFT:
+      return (_.shuffle([BOTTOM_LEFT, BOTTOM, LEFT]) as number[])
+        .concat(_.shuffle([BOTTOM_RIGHT, TOP_LEFT]), _.shuffle([RIGHT, TOP]))
+    case BOTTOM:
+      return (_.shuffle([BOTTOM, BOTTOM_RIGHT, BOTTOM_LEFT]) as number[])
+        .concat(_.shuffle([RIGHT, LEFT]), _.shuffle([TOP_RIGHT, TOP_LEFT]))
+    case BOTTOM_RIGHT:
+      return (_.shuffle([BOTTOM_RIGHT, RIGHT, BOTTOM]) as number[])
+        .concat(_.shuffle([TOP_RIGHT, BOTTOM_LEFT]), _.shuffle([TOP, LEFT]))
+    case RIGHT:
+      return (_.shuffle([RIGHT, TOP_RIGHT, BOTTOM_RIGHT]) as number[])
+        .concat(_.shuffle([TOP, BOTTOM]), _.shuffle([TOP_LEFT, BOTTOM_LEFT]))
+    case TOP_RIGHT:
+      return (_.shuffle([TOP_RIGHT, TOP, RIGHT]) as number[])
+        .concat(_.shuffle([TOP_LEFT, BOTTOM_RIGHT]), _.shuffle([LEFT, BOTTOM]))
+    default:
+      return _.shuffle([TOP, TOP_LEFT, TOP_RIGHT, LEFT, RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM])
+  }
 }
 
 Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
