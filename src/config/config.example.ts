@@ -30,12 +30,12 @@ export const LOG_PRINT_TICK: boolean = true
 /**
  * Prepend log output with source line.
  */
-export const LOG_PRINT_LINES: boolean = false
+export const LOG_PRINT_LINES: boolean = true
 
 /**
  * Load source maps and resolve source lines back to typeascript.
  */
-export const LOG_LOAD_SOURCE_MAP: boolean = false
+export const LOG_LOAD_SOURCE_MAP: boolean = true
 
 /**
  * Maximum padding for source links (for aligning log output).
