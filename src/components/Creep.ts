@@ -215,10 +215,20 @@ Creep.prototype.getDirectionPriorities = function(this: Creep): number[] {
 }
 
 Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
-  return _(this.directionPheromoneLevels).map(
-    ({ dir, depositPheromoneLevel, searchPheromoneLevel }) =>
-      ({ dir, level: (2 * searchPheromoneLevel) - depositPheromoneLevel })
-  ).shuffle().max((r) => r.level).dir
+  const directionPriorities = this.getDirectionPriorities()
+  return _.min(this.nearbyTiles
+    .filter(({ dir, tile }) =>
+      directionPriorities.indexOf(dir) !== -1 &&
+      tile.isWalkable(this.isCarryingEnergy ? true : Math.random() < 0.5)
+    )
+    .sort((a, b) => directionPriorities.indexOf(a.dir) - directionPriorities.indexOf(b.dir))
+    .map(({ dir, tile }) => {
+      const depositPheromoneLevel = this.currentDepositPheromone !== undefined ?
+        tile.pheromones[this.currentDepositPheromone] : 0
+      const searchPheromoneLevel = tile.pheromones[this.currentSearchPheromone]
+      return { dir, level: depositPheromoneLevel - (2 * searchPheromoneLevel) }
+    }),
+    ({ level }) => level).dir
 }
 
 Creep.prototype.searchMove = function(this: Creep): boolean {
