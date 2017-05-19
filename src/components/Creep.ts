@@ -35,11 +35,6 @@ Object.defineProperty(Creep.prototype, 'currentSourceId', {
     this.memory.currentSourceId = value
   }
 })
-
-Object.defineProperty(Creep.prototype, 'homePosition', {
-  configurable: true,
-  get(this: Creep) {
-    return _.create(RoomPosition.prototype, this.memory.homePosition)
   }
 })
 
@@ -73,6 +68,14 @@ Object.defineProperty(Creep.prototype, 'lastPheromoneDepositAmount', {
   },
   set(this: Creep, value: number) {
     this.memory.lastPheromoneDepositAmount = value
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'nearbySpawn', {
+  configurable: true,
+  get(this: Creep) {
+    const spawnTile = _.find(this.nearbyTiles, ({ tile }) => (tile.structures.spawn || []).length > 0)
+    if (spawnTile !== undefined) { return _.first(spawnTile.tile.structures.spawn) as Spawn }
   }
 })
 

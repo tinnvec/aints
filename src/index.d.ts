@@ -22,10 +22,10 @@ interface Creep {
   currentDepositPheromone: string | undefined
   currentSearchPheromone: string
   currentSourceId: string | undefined
-  homePosition: RoomPosition
   isSearching: boolean
   lastMoveWasSuccessful: boolean
   lastPheromoneDepositAmount: number
+  nearbySpawn?: Spawn
   stepsFromLastSite: number
 
   run(): void
