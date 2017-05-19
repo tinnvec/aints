@@ -171,13 +171,11 @@ Creep.prototype.run = function(this: Creep) {
   }
 }
 
-Creep.prototype.getCurrentLocationPheromoneLevel = function(this: Creep, type: string): number {
-  return this.getLocationPheromoneLevel(type, this.pos.x, this.pos.y)
 }
 
 Creep.prototype.depositPheromone = function(this: Creep): number {
   if (this.currentDepositPheromone === undefined) { return 0 }
-  const currentDepositLevel = this.getCurrentLocationPheromoneLevel(this.currentDepositPheromone)
+  const currentDepositLevel = this.room.pheromoneNetwork.getLevel(this.currentDepositPheromone, this.pos.x, this.pos.y)
   const maxDepositAmount = Config.MAX_TILE_PHEROMONE_LEVEL - (this.stepsFromLastSite * Config.PHEROMONE_DEPOSIT_RATE)
   const depositAmount = Math.max(0, maxDepositAmount - currentDepositLevel)
   if (depositAmount <= 0) { return 0 }
