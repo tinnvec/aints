@@ -21,6 +21,7 @@ interface Creep {
   readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
   currentDepositPheromone: string | undefined
   currentSearchPheromone: string
+  isHarvesting: boolean
   isSearching: boolean
   lastMoveWasSuccessful: boolean
   lastPheromoneDepositAmount: number

@@ -26,8 +26,10 @@ Object.defineProperty(Creep.prototype, 'currentSearchPheromone', {
   }
 })
 
+Object.defineProperty(Creep.prototype, 'isHarvesting', {
   configurable: true,
   get(this: Creep) {
+    return this.nearbySource !== undefined && this.nearbySource.energy > 0 && _.sum(this.carry) < this.carryCapacity
   }
 })
 
