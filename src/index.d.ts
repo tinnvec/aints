@@ -5,14 +5,6 @@ interface Memory {
 
 declare const __REVISION__: string;
 
-// --- Types ---
-
-type DirectionPheromoneLevels = {
-  dir: number
-  depositPheromoneLevel: number
-  searchPheromoneLevel: number
-}
-
 // --- Interfaces ---
 
 interface Creep {
