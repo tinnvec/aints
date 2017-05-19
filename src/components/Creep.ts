@@ -36,7 +36,7 @@ Object.defineProperty(Creep.prototype, 'isHarvesting', {
 Object.defineProperty(Creep.prototype, 'isSearching', {
   configurable: true,
   get(this: Creep) {
-    if (this.memory.isSearching === undefined) { this.memory.isSearching = false }
+    if (this.memory.isSearching === undefined) { this.memory.isSearching = true }
     return this.memory.isSearching
   },
   set(this: Creep, value: boolean) {
