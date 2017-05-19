@@ -24,6 +24,7 @@ interface Creep {
   isSearching: boolean
   lastMoveWasSuccessful: boolean
   lastPheromoneDepositAmount: number
+  lastDirection?: number
   nearbySource?: Source
   nearbySpawn?: Spawn
   stepsFromLastSite: number

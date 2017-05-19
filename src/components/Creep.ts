@@ -39,6 +39,7 @@ Object.defineProperty(Creep.prototype, 'isSearching', {
   },
   set(this: Creep, value: boolean) {
     this.stepsFromLastSite = 0
+    this.lastDirection = undefined
     this.memory.isSearching = value
   }
 })
@@ -51,6 +52,17 @@ Object.defineProperty(Creep.prototype, 'lastMoveWasSuccessful', {
   },
   set(this: Creep, value: boolean) {
     this.memory.lastMoveWasSuccessful = value
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'lastDirection', {
+  configurable: true,
+  get(this: Creep) {
+    if (this.memory.lastDirection === undefined) { return undefined }
+    return this.memory.lastDirection
+  },
+  set(this: Creep, value: number | undefined) {
+    this.memory.lastDirection = value
   }
 })
 
