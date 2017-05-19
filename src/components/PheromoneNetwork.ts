@@ -5,7 +5,7 @@ export default class PheromoneNetwork {
     return pn
   }
 
-  public layers: { [type: string]: CostMatrix }
+  public readonly layers: { [type: string]: CostMatrix }
 
   private room: Room
 

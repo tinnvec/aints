@@ -10,16 +10,16 @@ declare const __REVISION__: string;
 interface Creep {
   _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
   readonly isCarryingEnergy: boolean
+  readonly currentDepositPheromone: string | undefined
+  readonly currentSearchPheromone: string
+  readonly directionPriorities: number[]
+  readonly isHarvesting: boolean
+  readonly nearbySource?: Source
+  readonly nearbySpawn?: Spawn
   readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
-  currentDepositPheromone: string | undefined
-  currentSearchPheromone: string
-  directionPriorities: number[]
-  isHarvesting: boolean
   isSearching: boolean
   lastMoveWasSuccessful: boolean
   lastDirection?: number
-  nearbySource?: Source
-  nearbySpawn?: Spawn
   stepsFromLastSite: number
   run(): void
   depositPheromone(): number
@@ -28,17 +28,17 @@ interface Creep {
 }
 
 interface LookTile {
-  constructionSites: { [structureType: string]: ConstructionSite[] }
-  creeps: Creep[]
-  pheromones: { [type: string]: number }
-  sources: Source[]
-  structures: { [structureType: string]: Structure[] }
-  terrain: string[]
+  readonly constructionSites: { [structureType: string]: ConstructionSite[] }
+  readonly creeps: Creep[]
+  readonly pheromones: { [type: string]: number }
+  readonly sources: Source[]
+  readonly structures: { [structureType: string]: Structure[] }
+  readonly terrain: string[]
   isWalkable(ignoreCreeps?: boolean): boolean
 }
 
 interface PheromoneNetwork {
-  layers: { [type: string]: CostMatrix }
+  readonly layers: { [type: string]: CostMatrix }
   dissipate(): void
   draw(type: string, color?: string): void
   getLevel(type: string, x: number, y: number): number

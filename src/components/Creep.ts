@@ -63,41 +63,6 @@ Object.defineProperty(Creep.prototype, 'isHarvesting', {
   }
 })
 
-Object.defineProperty(Creep.prototype, 'isSearching', {
-  configurable: true,
-  get(this: Creep) {
-    if (this.memory.isSearching === undefined) { this.memory.isSearching = true }
-    return this.memory.isSearching
-  },
-  set(this: Creep, value: boolean) {
-    this.stepsFromLastSite = 0
-    this.lastDirection = undefined
-    this.memory.isSearching = value
-  }
-})
-
-Object.defineProperty(Creep.prototype, 'lastMoveWasSuccessful', {
-  configurable: true,
-  get(this: Creep) {
-    if (this.memory.lastMoveWasSuccessful === undefined) { this.memory.lastMoveWasSuccessful = true }
-    return this.memory.lastMoveWasSuccessful
-  },
-  set(this: Creep, value: boolean) {
-    this.memory.lastMoveWasSuccessful = value
-  }
-})
-
-Object.defineProperty(Creep.prototype, 'lastDirection', {
-  configurable: true,
-  get(this: Creep) {
-    if (this.memory.lastDirection === undefined) { return undefined }
-    return this.memory.lastDirection
-  },
-  set(this: Creep, value: number | undefined) {
-    this.memory.lastDirection = value
-  }
-})
-
 Object.defineProperty(Creep.prototype, 'nearbySource', {
   configurable: true,
   get(this: Creep) {
@@ -137,6 +102,41 @@ Object.defineProperty(Creep.prototype, 'nearbyTiles', {
       }
     }
     return this._nearbyTiles
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'isSearching', {
+  configurable: true,
+  get(this: Creep) {
+    if (this.memory.isSearching === undefined) { this.memory.isSearching = true }
+    return this.memory.isSearching
+  },
+  set(this: Creep, value: boolean) {
+    this.stepsFromLastSite = 0
+    this.lastDirection = undefined
+    this.memory.isSearching = value
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'lastMoveWasSuccessful', {
+  configurable: true,
+  get(this: Creep) {
+    if (this.memory.lastMoveWasSuccessful === undefined) { this.memory.lastMoveWasSuccessful = true }
+    return this.memory.lastMoveWasSuccessful
+  },
+  set(this: Creep, value: boolean) {
+    this.memory.lastMoveWasSuccessful = value
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'lastDirection', {
+  configurable: true,
+  get(this: Creep) {
+    if (this.memory.lastDirection === undefined) { return undefined }
+    return this.memory.lastDirection
+  },
+  set(this: Creep, value: number | undefined) {
+    this.memory.lastDirection = value
   }
 })
 

@@ -1,10 +1,10 @@
 export default class LookTile extends RoomPosition {
-  public constructionSites: { [structureType: string]: ConstructionSite[] }
-  public creeps: Creep[]
-  public pheromones: { [type: string]: number }
-  public sources: Source[]
-  public structures: { [structureType: string]: Structure[] }
-  public terrain: string[]
+  public readonly constructionSites: { [structureType: string]: ConstructionSite[] }
+  public readonly creeps: Creep[]
+  public readonly pheromones: { [type: string]: number }
+  public readonly sources: Source[]
+  public readonly structures: { [structureType: string]: Structure[] }
+  public readonly terrain: string[]
 
   private room: Room
 
