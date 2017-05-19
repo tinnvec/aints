@@ -121,46 +121,23 @@ Object.defineProperty(Creep.prototype, 'stepsFromLastSite', {
 
 Creep.prototype.run = function(this: Creep) {
   if (this.spawning) { return }
+  // Check for max search length
+  if (this.isSearching && this.stepsFromLastSite >= Config.MAX_SEARCH_STEPS) { this.isSearching = false }
 
-  if (this.isSearching) {
-    const nearbySources = this.pos.findInRange<Source>(FIND_SOURCES_ACTIVE, 1)
-    if (nearbySources.length > 0) {
-      this.currentSourceId = _.first(nearbySources).id
-      this.isSearching = false
-    }
-    if (this.stepsFromLastSite >= MAX_SEARCH_STEPS - 1) { this.isSearching = false }
-    if (this.pos.isNearTo(this.homePosition)) { this.stepsFromLastSite = 0 }
+  // Check for spawn
+  if (this.nearbySpawn !== undefined) {
+    this.transfer(this.nearbySpawn, RESOURCE_ENERGY)
+    if (!this.isCarryingEnergy) { this.isSearching = true }
   }
-
-  if (!this.isSearching) {
-    if (this.currentSourceId !== undefined) {
-      const source = Game.getObjectById<Source>(this.currentSourceId)
-      if (source !== null) { this.harvest(source) }
-      if (_.sum(this.carry) >= this.carryCapacity) { this.currentSourceId = undefined }
-    }
-
-    if (this.currentSourceId === undefined) {
-      if (this.pos.isNearTo(this.homePosition)) {
-        this.homePosition.lookFor<Structure>(LOOK_STRUCTURES).forEach((struct) => {
-          if (!this.isCarryingEnergy) { return }
-          if (struct.structureType === STRUCTURE_SPAWN) { this.transfer(struct, RESOURCE_ENERGY) }
-        })
-        if (!this.isCarryingEnergy) { this.isSearching = true }
-      }
-    }
+  // Check for source
+  if (this.nearbySource !== undefined && _.sum(this.carry) < this.carryCapacity) {
+    this.harvest(this.nearbySource)
+    if (this.isCarryingEnergy) { this.isSearching = false }
   }
-
-  if (this.currentSourceId === undefined) {
-    this.lastMoveWasSuccessful = this.fatigue < 1 ? this.searchMove() : false
-  }
-
-  if (this.lastMoveWasSuccessful) {
-    this.lastPheromoneDepositAmount = this.depositPheromone()
-  } else {
-    this.lastPheromoneDepositAmount = 0
-  }
-}
-
+  // Deposit pheromone
+  if (this.lastMoveWasSuccessful) { this.depositPheromone() }
+  // Move
+  if (!this.isHarvesting) { this.lastMoveWasSuccessful = this.searchMove() }
 }
 
 Creep.prototype.depositPheromone = function(this: Creep): number {
