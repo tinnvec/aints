@@ -199,7 +199,10 @@ Creep.prototype.depositPheromone = function(this: Creep): number {
 
 Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
   return _(this.nearbyTiles)
-    .filter(({ dir, tile }) => this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(this.isCarryingEnergy))
+    .filter(({ dir, tile }) =>
+      this.directionPriorities.indexOf(dir) !== -1 &&
+      tile.isWalkable(this.isCarryingEnergy ? true : Math.random() < 0.25)
+    )
     .sort((a, b) => this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir))
     .map(({ dir, tile }) => {
       const depositPheromoneLevel = this.currentDepositPheromone !== undefined ?
