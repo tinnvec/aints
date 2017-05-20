@@ -181,6 +181,9 @@ Creep.prototype.run = function(this: Creep) {
     this.harvest(this.nearbySource)
     if (this.isCarryingEnergy) { this.isSearching = false }
   }
+  // Check fatigue
+  if (this.fatigue > 0 && this.lastMoveWasSuccessful) { this.stepsFromLastSite++ }
+
   // Deposit pheromone
   if (this.lastMoveWasSuccessful) { this.depositPheromone() }
   // Move
@@ -213,10 +216,7 @@ Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
 }
 
 Creep.prototype.searchMove = function(this: Creep): boolean {
-  if (this.fatigue > 0 && this.lastMoveWasSuccessful) {
-    this.stepsFromLastSite += Math.floor(this.fatigue / 2)
-    return false
-  }
+  if (this.fatigue > 0 && this.lastMoveWasSuccessful) { return true }
   const dir = this.getSearchPheromoneDirection()
   if (this.move(dir) === OK) {
     this.lastDirection = dir

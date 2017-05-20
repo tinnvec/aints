@@ -11,6 +11,8 @@ Screeps AI using ants and other social colony insects as a model.
     - Source Exits
       - Creep not full - Harvest energy
       - Creep full - Switch to homing mode
+    - Creep is fatigued
+      - Increase steps from last site
 2. Deposit Pheromone
     - Amount - increase level to `(Max level - steps from last site) * per-step change`
       - Max level - `CostMatrix` max value (255)
