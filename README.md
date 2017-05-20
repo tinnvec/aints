@@ -5,26 +5,43 @@ Screeps AI using ants and other social colony insects as a model.
 ## Foraging
 
 1. Check Surroundings
-    - Spawn Exists
-      - Creep not empty - Transfer energy to spawn
-      - Creep empty - Switch to search mode
-    - Source Exits
-      - Creep not full - Harvest energy
-      - Creep full - Switch to homing mode
+    - Spawn nearby
+      - Creep empty
+        - Switch to/ensure search mode
+    - Source nearby
+      - Source not empty, creep not full nor empty
+        - Switch to/ensure homing mode
     - Creep is fatigued
       - Increase steps from last site
 2. Deposit Pheromone
-    - Amount - increase level to `(Max level - steps from last site) * per-step change`
-      - Max level - `CostMatrix` max value (255)
-      - Min level - Enough that the pheromone won't decay completely within longest action time (ie. harvesting)
-      - Per-step change - `(max level - min level) / max search length`
+    - Amount
+      - Increase level to `(Max level - steps from last site) * per-step change`
+      - Max level
+        - `CostMatrix` max value (255)
+      - Min level
+        - Enough that the pheromone won't decay completely within longest action time (ie. harvesting)
+      - Per-step change
+        - `(max level - min level) / max search length`
     - Pheromone type
-      - Search Mode - homing pheromone
-      - Homing Mode - previous search pheromone.
+      - Search Mode
+        - homing pheromone
+      - Homing Mode
+        - previous search pheromone.
         - If max search steps was reached, don't deposit pheromones while homing
-3. Move
-    - Don't move if harvesting
-    - Move to tile with highest value for `(2 * search pheromone) - deposit pheromone`
+3. Take Action
+    - Spawn nearby
+      - Creep not empty
+        - Transfer energy to spawn
+    - Source nearby
+      - Creep not full
+        - Harvest energy
+    - Search too long
+      - Switch to homing mode
+4. Move
+    - Creep not harvesting nor fatigued
+      - Move to tile with highest value for `(2 * search pheromone) - deposit pheromone`
+        - Increase steps from last site on successful move
+
 
 ## Spawning
 

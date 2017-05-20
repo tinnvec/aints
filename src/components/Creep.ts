@@ -169,23 +169,23 @@ Object.defineProperty(Creep.prototype, 'stepsFromLastSite', {
 Creep.prototype.run = function(this: Creep) {
   if (this.spawning) { return }
 
-  // Check for max search length
-  if (this.isSearching && this.stepsFromLastSite >= Config.MAX_SEARCH_STEPS) { this.isSearching = false }
-  // Check for spawn
-  if (this.nearbySpawn !== undefined) {
-    this.transfer(this.nearbySpawn, RESOURCE_ENERGY)
-    if (!this.isCarryingEnergy) { this.isSearching = true }
-  }
-  // Check for source
-  if (this.nearbySource !== undefined && _.sum(this.carry) < this.carryCapacity) {
-    this.harvest(this.nearbySource)
-    if (this.isCarryingEnergy) { this.isSearching = false }
-  }
+  // Check for spawn near and no energy to reset search
+  if (this.nearbySpawn !== undefined && !this.isCarryingEnergy) { this.isSearching = true }
+  // Check harvesting and carrying energy to suppress search
+  if (this.isHarvesting && this.isCarryingEnergy) { this.isSearching = false }
   // Check fatigue
   if (this.fatigue > 0 && this.lastMoveWasSuccessful) { this.stepsFromLastSite++ }
 
   // Deposit pheromone
   if (this.lastMoveWasSuccessful) { this.depositPheromone() }
+
+  // Check for spawn to transfer to
+  if (this.nearbySpawn !== undefined) { this.transfer(this.nearbySpawn, RESOURCE_ENERGY) }
+  // Check for harvesting
+  if (this.isHarvesting) { this.harvest(this.nearbySource!) }
+  // Check for max search length
+  if (this.isSearching && this.stepsFromLastSite >= Config.MAX_SEARCH_STEPS) { this.isSearching = false }
+
   // Move
   if (!this.isHarvesting) { this.lastMoveWasSuccessful = this.searchMove() }
 }
