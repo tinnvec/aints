@@ -205,8 +205,8 @@ Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
       const depositPheromoneLevel = this.currentDepositPheromone !== undefined ?
         tile.pheromones[this.currentDepositPheromone] : 0
       const searchPheromoneLevel = tile.pheromones[this.currentSearchPheromone]
-      return { dir, level: depositPheromoneLevel - (2 * searchPheromoneLevel) }
-    }).min(({ level }) => level).dir
+      return { dir, level: (2 * searchPheromoneLevel) - depositPheromoneLevel }
+    }).max(({ level }) => level).dir
 }
 
 Creep.prototype.searchMove = function(this: Creep): boolean {

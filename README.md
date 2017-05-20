@@ -22,7 +22,7 @@ Screeps AI using ants and other social colony insects as a model.
         - If max search steps was reached, don't deposit pheromones while homing
 3. Move
     - Don't move if harvesting
-    - Move to tile with lowest value for `deposit pheromone - (2 * search pheromone)`
+    - Move to tile with highest value for `(2 * search pheromone) - deposit pheromone`
 
 ## Spawning
 
