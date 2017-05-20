@@ -25,34 +25,47 @@ Object.defineProperty(Creep.prototype, 'currentSearchPheromone', {
 Object.defineProperty(Creep.prototype, 'directionPriorities', {
   configurable: true,
   get(this: Creep) {
+    let result: number[]
     switch (this.lastDirection) {
       case TOP:
-        return (_.shuffle([TOP, TOP_LEFT, TOP_RIGHT]) as number[])
+        result = (_.shuffle([TOP, TOP_LEFT, TOP_RIGHT]) as number[])
           .concat(_.shuffle([LEFT, RIGHT]), _.shuffle([BOTTOM_LEFT, BOTTOM_RIGHT]))
+        break
       case TOP_LEFT:
-        return (_.shuffle([TOP_LEFT, LEFT, TOP]) as number[])
+        result = (_.shuffle([TOP_LEFT, LEFT, TOP]) as number[])
           .concat(_.shuffle([BOTTOM_LEFT, TOP_RIGHT]), _.shuffle([BOTTOM, RIGHT]))
+        break
       case LEFT:
-        return (_.shuffle([LEFT, BOTTOM_LEFT, TOP_LEFT]) as number[])
+        result = (_.shuffle([LEFT, BOTTOM_LEFT, TOP_LEFT]) as number[])
           .concat(_.shuffle([BOTTOM, TOP]), _.shuffle([BOTTOM_RIGHT, TOP_RIGHT]))
+        break
       case BOTTOM_LEFT:
-        return (_.shuffle([BOTTOM_LEFT, BOTTOM, LEFT]) as number[])
+        result = (_.shuffle([BOTTOM_LEFT, BOTTOM, LEFT]) as number[])
           .concat(_.shuffle([BOTTOM_RIGHT, TOP_LEFT]), _.shuffle([RIGHT, TOP]))
+        break
       case BOTTOM:
-        return (_.shuffle([BOTTOM, BOTTOM_RIGHT, BOTTOM_LEFT]) as number[])
+        result = (_.shuffle([BOTTOM, BOTTOM_RIGHT, BOTTOM_LEFT]) as number[])
           .concat(_.shuffle([RIGHT, LEFT]), _.shuffle([TOP_RIGHT, TOP_LEFT]))
+        break
       case BOTTOM_RIGHT:
-        return (_.shuffle([BOTTOM_RIGHT, RIGHT, BOTTOM]) as number[])
+        result = (_.shuffle([BOTTOM_RIGHT, RIGHT, BOTTOM]) as number[])
           .concat(_.shuffle([TOP_RIGHT, BOTTOM_LEFT]), _.shuffle([TOP, LEFT]))
+        break
       case RIGHT:
-        return (_.shuffle([RIGHT, TOP_RIGHT, BOTTOM_RIGHT]) as number[])
+        result = (_.shuffle([RIGHT, TOP_RIGHT, BOTTOM_RIGHT]) as number[])
           .concat(_.shuffle([TOP, BOTTOM]), _.shuffle([TOP_LEFT, BOTTOM_LEFT]))
+        break
       case TOP_RIGHT:
-        return (_.shuffle([TOP_RIGHT, TOP, RIGHT]) as number[])
+        result = (_.shuffle([TOP_RIGHT, TOP, RIGHT]) as number[])
           .concat(_.shuffle([TOP_LEFT, BOTTOM_RIGHT]), _.shuffle([LEFT, BOTTOM]))
+        break
       default:
-        return _.shuffle([TOP, TOP_LEFT, TOP_RIGHT, LEFT, RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM])
+        result = _.shuffle([TOP, TOP_LEFT, TOP_RIGHT, LEFT, RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM])
     }
+    if (this.lastDirection !== undefined && result.length < 8 && this.isCarryingEnergy) {
+      result.push(this.lastDirection)
+    }
+    return result
   }
 })
 
