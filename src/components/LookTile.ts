@@ -1,3 +1,6 @@
+import Profile from '../lib/screeps-profiler/Profile'
+
+@Profile
 export default class LookTile extends RoomPosition {
   public readonly constructionSites: { [structureType: string]: ConstructionSite[] }
   public readonly creeps: Creep[]

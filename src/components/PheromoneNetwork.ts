@@ -1,3 +1,6 @@
+import Profile from '../lib/screeps-profiler/Profile'
+
+@Profile
 export default class PheromoneNetwork {
   public static deserialize(memObj: { layers: { [type: string]: number[] }, roomName: string }): PheromoneNetwork {
     const pn = new PheromoneNetwork(Game.rooms[memObj.roomName])
