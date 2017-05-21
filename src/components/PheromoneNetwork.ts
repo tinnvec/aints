@@ -18,6 +18,42 @@ export default class PheromoneNetwork {
     }
   }
 
+  public diffuse() {
+    const rate = 0.01
+    const min = 4
+    let x: number
+    let y: number
+    for (const type in this.layers) {
+      for (x = 0; x < 50; x++) {
+        for (y = 0; y < 50; y++) {
+          const curr = this.layers[type].get(x, y)
+          if (curr < min) { continue }
+          const amt = Math.max(Math.floor(curr * rate), 1)
+          const DIRECTION_COORDINATE_DELTAS: { [dir: number]: [number, number] } = {
+            8: [-1, -1],  1: [0, -1],  2: [1, -1],
+            7: [-1, 0],   /*Center*/   3: [1, 0],
+            6: [-1, 1],   5: [0, 1],   4: [1, 1]
+          }
+          const nearbyTiles: Array<{ amount: number, x: number, y: number}> = []
+          for (const dir in DIRECTION_COORDINATE_DELTAS) {
+            const [dx, dy] = DIRECTION_COORDINATE_DELTAS[dir]
+            const nx = x + dx
+            const ny = y + dy
+            if (nx < 0 || ny < 0 || nx > 49 || ny > 49) { continue }
+            const nearbyCurr = this.layers[type].get(nx, ny)
+            if (nearbyCurr >= curr) { continue }
+            nearbyTiles.push({ amount: nearbyCurr, x: nx, y: ny })
+          }
+          if (nearbyTiles.length < 1) { continue }
+          const lowestNearby = _(nearbyTiles).shuffle().min(({ amount }) => amount)
+          this.layers[type].set(lowestNearby.x, lowestNearby.y, Math.min(lowestNearby.amount + amt, 255))
+          this.layers[type].set(x, y, Math.max(curr - amt, 0))
+        }
+      }
+      this.room.memory.pheromoneNetwork.layers[type] = this.layers[type].serialize()
+    }
+  }
+
   public dissipate() {
     const rate = 1
     let x: number

@@ -39,6 +39,7 @@ interface LookTile {
 
 interface PheromoneNetwork {
   readonly layers: { [type: string]: CostMatrix }
+  diffuse(): void
   dissipate(): void
   draw(type: string, color?: string): void
   getLevel(type: string, x: number, y: number): number
