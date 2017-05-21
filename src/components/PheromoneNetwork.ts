@@ -55,7 +55,7 @@ export default class PheromoneNetwork {
   }
 
   public dissipate() {
-    const rate = 1
+    const rate = 0.01
     let x: number
     let y: number
     for (const type in this.layers) {
@@ -63,7 +63,8 @@ export default class PheromoneNetwork {
         for (y = 0; y < 50; y++) {
           const curr = this.layers[type].get(x, y)
           if (curr === 0) { continue }
-          this.layers[type].set(x, y, Math.max(curr - rate, 0))
+          const amt = Math.max(Math.floor(curr * rate), 1)
+          this.layers[type].set(x, y, Math.max(curr - amt, 0))
         }
       }
       this.room.memory.pheromoneNetwork.layers[type] = this.layers[type].serialize()
