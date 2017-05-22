@@ -1,5 +1,4 @@
 import * as Config from '../config/config'
-import LookTile from './LookTile'
 
 // --- Properties ---
 
@@ -110,8 +109,9 @@ Object.defineProperty(Creep.prototype, 'nearbyTiles', {
         const [dx, dy] = DIRECTION_COORDINATE_DELTAS[dir]
         const nx = x + dx
         const ny = y + dy
-        if (nx < 0 || ny < 0 || nx > 49 || ny > 49) { continue }
-        this._nearbyTiles.push({ dir: parseInt(dir, 10), tile: new LookTile(nx, ny, this.room.name) })
+        const tile = this.room.getLookTile(nx, ny)
+        if (tile === undefined) { return }
+        this._nearbyTiles.push({ dir: parseInt(dir, 10), tile })
       }
     }
     return this._nearbyTiles

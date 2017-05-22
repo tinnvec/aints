@@ -48,8 +48,11 @@ interface PheromoneNetwork {
 }
 
 interface Room {
+  _lookTiles?: LookTile[]
   _pheromoneNetwork?: PheromoneNetwork
+  readonly lookTiles: LookTile[]
   readonly pheromoneNetwork: PheromoneNetwork
+  getLookTile(x: number, y: number): LookTile | undefined
 }
 
 interface Structure {
