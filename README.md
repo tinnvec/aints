@@ -67,3 +67,9 @@ Screeps AI using ants and other social colony insects as a model.
 - http://natureofcode.com/book
 - [Composite collective decision-making](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4590433/)
 - http://www.huffingtonpost.com/marc-bekoff/study-rats-empathy_b_1138675.html
+
+---
+
+## Thanks
+
+Forked with love from [screeps-typescript-starter](https://github.com/screepers/screeps-typescript-starter)
