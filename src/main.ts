@@ -9,17 +9,21 @@ import './components/Structure'
 import './components/StructureSpawn'
 
 // This is an example for using a config variable from `config.ts`.
-// NOTE: this is used as an example, you may have better performance
-// by setting USE_PROFILER through webpack, if you want to permanently
-// remove it on deploy
+// NOTE: this is used as an example, you may have better performance by setting USE_PROFILER through webpack, if you
+// want to permanently remove it on deploy
 // Start the profiler
-if (Config.USE_PROFILER) {
-  Profiler.enable()
-}
+if (Config.USE_PROFILER) { Profiler.enable() }
 
 log.info(`loading revision: ${ __REVISION__ }`)
 
 function mloop() {
+  for (const name in Memory.rooms) {
+    if (!Game.rooms[name]) {
+      log.info(`Clearing non-existing room from memory: ${name}`)
+      Memory.rooms[name] = undefined
+    }
+  }
+
   for (const name in Memory.structures) {
     if (!Game.structures[name]) {
       log.info(`Clearing non-existing structure from memory: ${name}`)
@@ -34,17 +38,10 @@ function mloop() {
     }
   }
 
-  for (const name in Memory.rooms) {
-    if (!Game.rooms[name]) {
-      log.info(`Clearing non-existing room from memory: ${name}`)
-      Memory.rooms[name] = undefined
-    }
-  }
-
   // Run all game objects
   _.invoke(Game.rooms, 'run')
-  _.invoke(Game.creeps, 'run')
   _.invoke(Game.structures, 'run')
+  _.invoke(Game.creeps, 'run')
 
   // Draw Rooms
   _.invoke(Game.rooms, 'draw')
