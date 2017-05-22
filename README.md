@@ -49,6 +49,10 @@ Screeps AI using ants and other social colony insects as a model.
 
 - Spawn as many creeps as possible
 
+## Room Updates (Weather)
+
+- Dissipate each pheromone on each tile by 1 every other tick
+
 ---
 
 ## Articles
