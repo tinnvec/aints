@@ -1,3 +1,4 @@
+import * as Config from '../config/config'
 import LookTile from './LookTile'
 import PheromoneNetwork from './PheromoneNetwork'
 
@@ -43,8 +44,11 @@ Room.prototype.run = function(this: Room) {
 }
 
 Room.prototype.draw = function(this: Room) {
-  this.pheromoneNetwork.draw('home', '#47AFFF')
-  this.pheromoneNetwork.draw('energy', '#FFE87B')
+  if (Config.ENABLE_PHEROMONE_VISUALS) {
+    this.pheromoneNetwork.draw('home', '#47AFFF')
+    this.pheromoneNetwork.draw('energy', '#FFE87B')
+  }
+}
 
 Room.prototype.getLookTile = function(this: Room, x: number, y: number) {
   if (x < 0 || y < 0 || x > 49 || y > 49) { return }

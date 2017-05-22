@@ -6,6 +6,7 @@ import { LogLevels } from '../lib/logger/logLevels'
 export const MAX_SEARCH_STEPS: number = 50
 
 // Pheromones
+export const ENABLE_PHEROMONE_VISUALS: boolean = true
 export const MAX_TILE_PHEROMONE_LEVEL: number = 255
 export const MIN_PHEROMONE_DEPOSIT_LEVEL: number = 15
 export const PHEROMONE_DEPOSIT_RATE: number =
