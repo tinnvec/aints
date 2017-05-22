@@ -4,93 +4,116 @@ import * as Config from '../config/config'
 
 Object.defineProperty(Creep.prototype, 'isCarryingEnergy', {
   configurable: true,
-  get(this: Creep) { return (this.carry.energy || 0) > 0 }
+  get(this: Creep) {
+    if (this._isCaryingEnergy === undefined) {
+      this._isCaryingEnergy = (this.carry.energy || 0) > 0
+    }
+    return this._isCaryingEnergy
+  }
 })
 
 Object.defineProperty(Creep.prototype, 'currentDepositPheromone', {
   configurable: true,
   get(this: Creep) {
-    return this.isSearching ? 'home' : this.isCarryingEnergy ? 'energy' : undefined
+    if (this._currentDepositPheromone === undefined) {
+      this._currentDepositPheromone = this.isSearching ? 'home' : this.isCarryingEnergy ? 'energy' : undefined
+    }
+    return this._currentDepositPheromone
   }
 })
 
 Object.defineProperty(Creep.prototype, 'currentSearchPheromone', {
   configurable: true,
   get(this: Creep) {
-    return this.isSearching ? 'energy' : 'home'
+    if (this._currentSearchPheromone === undefined) {
+      this._currentSearchPheromone = this.isSearching ? 'energy' : 'home'
+    }
+    return this._currentSearchPheromone
   }
 })
 
 Object.defineProperty(Creep.prototype, 'directionPriorities', {
   configurable: true,
   get(this: Creep) {
-    let result: number[]
-    switch (this.lastDirection) {
-      case TOP:
-        result = (_.shuffle([TOP, TOP_LEFT, TOP_RIGHT]) as number[])
-          .concat(_.shuffle([LEFT, RIGHT]), _.shuffle([BOTTOM_LEFT, BOTTOM_RIGHT]))
-        break
-      case TOP_LEFT:
-        result = (_.shuffle([TOP_LEFT, LEFT, TOP]) as number[])
-          .concat(_.shuffle([BOTTOM_LEFT, TOP_RIGHT]), _.shuffle([BOTTOM, RIGHT]))
-        break
-      case LEFT:
-        result = (_.shuffle([LEFT, BOTTOM_LEFT, TOP_LEFT]) as number[])
-          .concat(_.shuffle([BOTTOM, TOP]), _.shuffle([BOTTOM_RIGHT, TOP_RIGHT]))
-        break
-      case BOTTOM_LEFT:
-        result = (_.shuffle([BOTTOM_LEFT, BOTTOM, LEFT]) as number[])
-          .concat(_.shuffle([BOTTOM_RIGHT, TOP_LEFT]), _.shuffle([RIGHT, TOP]))
-        break
-      case BOTTOM:
-        result = (_.shuffle([BOTTOM, BOTTOM_RIGHT, BOTTOM_LEFT]) as number[])
-          .concat(_.shuffle([RIGHT, LEFT]), _.shuffle([TOP_RIGHT, TOP_LEFT]))
-        break
-      case BOTTOM_RIGHT:
-        result = (_.shuffle([BOTTOM_RIGHT, RIGHT, BOTTOM]) as number[])
-          .concat(_.shuffle([TOP_RIGHT, BOTTOM_LEFT]), _.shuffle([TOP, LEFT]))
-        break
-      case RIGHT:
-        result = (_.shuffle([RIGHT, TOP_RIGHT, BOTTOM_RIGHT]) as number[])
-          .concat(_.shuffle([TOP, BOTTOM]), _.shuffle([TOP_LEFT, BOTTOM_LEFT]))
-        break
-      case TOP_RIGHT:
-        result = (_.shuffle([TOP_RIGHT, TOP, RIGHT]) as number[])
-          .concat(_.shuffle([TOP_LEFT, BOTTOM_RIGHT]), _.shuffle([LEFT, BOTTOM]))
-        break
-      default:
-        result = _.shuffle([TOP, TOP_LEFT, TOP_RIGHT, LEFT, RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM])
+    if (this._directionPriorities === undefined) {
+      switch (this.lastDirection) {
+        case TOP:
+          this._directionPriorities = (_.shuffle([TOP, TOP_LEFT, TOP_RIGHT]) as number[])
+            .concat(_.shuffle([LEFT, RIGHT]), _.shuffle([BOTTOM_LEFT, BOTTOM_RIGHT]))
+          break
+        case TOP_LEFT:
+          this._directionPriorities = (_.shuffle([TOP_LEFT, LEFT, TOP]) as number[])
+            .concat(_.shuffle([BOTTOM_LEFT, TOP_RIGHT]), _.shuffle([BOTTOM, RIGHT]))
+          break
+        case LEFT:
+          this._directionPriorities = (_.shuffle([LEFT, BOTTOM_LEFT, TOP_LEFT]) as number[])
+            .concat(_.shuffle([BOTTOM, TOP]), _.shuffle([BOTTOM_RIGHT, TOP_RIGHT]))
+          break
+        case BOTTOM_LEFT:
+          this._directionPriorities = (_.shuffle([BOTTOM_LEFT, BOTTOM, LEFT]) as number[])
+            .concat(_.shuffle([BOTTOM_RIGHT, TOP_LEFT]), _.shuffle([RIGHT, TOP]))
+          break
+        case BOTTOM:
+          this._directionPriorities = (_.shuffle([BOTTOM, BOTTOM_RIGHT, BOTTOM_LEFT]) as number[])
+            .concat(_.shuffle([RIGHT, LEFT]), _.shuffle([TOP_RIGHT, TOP_LEFT]))
+          break
+        case BOTTOM_RIGHT:
+          this._directionPriorities = (_.shuffle([BOTTOM_RIGHT, RIGHT, BOTTOM]) as number[])
+            .concat(_.shuffle([TOP_RIGHT, BOTTOM_LEFT]), _.shuffle([TOP, LEFT]))
+          break
+        case RIGHT:
+          this._directionPriorities = (_.shuffle([RIGHT, TOP_RIGHT, BOTTOM_RIGHT]) as number[])
+            .concat(_.shuffle([TOP, BOTTOM]), _.shuffle([TOP_LEFT, BOTTOM_LEFT]))
+          break
+        case TOP_RIGHT:
+          this._directionPriorities = (_.shuffle([TOP_RIGHT, TOP, RIGHT]) as number[])
+            .concat(_.shuffle([TOP_LEFT, BOTTOM_RIGHT]), _.shuffle([LEFT, BOTTOM]))
+          break
+        default:
+          this._directionPriorities =
+            _.shuffle([TOP, TOP_LEFT, TOP_RIGHT, LEFT, RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM])
+      }
+      if (this.lastDirection !== undefined && this._directionPriorities.length < 8 && this.isCarryingEnergy) {
+        this._directionPriorities.push(this.lastDirection)
+      }
     }
-    if (this.lastDirection !== undefined && result.length < 8 && this.isCarryingEnergy) {
-      result.push(this.lastDirection)
-    }
-    return result
+    return this._directionPriorities
   }
 })
 
 Object.defineProperty(Creep.prototype, 'isHarvesting', {
   configurable: true,
   get(this: Creep) {
-    return this.nearbySource !== undefined && this.nearbySource.energy > 0 && _.sum(this.carry) < this.carryCapacity
+    if (this._isHarvesting === undefined) {
+      this._isHarvesting =
+        this.nearbySource !== undefined && this.nearbySource.energy > 0 && _.sum(this.carry) < this.carryCapacity
+    }
+    return this._isHarvesting
   }
 })
 
 Object.defineProperty(Creep.prototype, 'nearbySource', {
   configurable: true,
   get(this: Creep) {
-    const sourceTile = _.find(
-      this.nearbyTiles,
-      ({ tile }) => (tile.sources || []).length > 0 && _.every(tile.sources, (source) => source.energy > 0)
-    )
-    if (sourceTile !== undefined) { return _.first(sourceTile.tile.sources) }
+    if (this._nearbySource === undefined) {
+      const sourceTile = _.find(
+        this.nearbyTiles,
+        ({ tile }) => (tile.sources || []).length > 0 && _.every(tile.sources, (source) => source.energy > 0)
+      )
+      if (sourceTile !== undefined) { this._nearbySource = _.first(sourceTile.tile.sources) }
+    }
+    return this._nearbySource
   }
 })
 
 Object.defineProperty(Creep.prototype, 'nearbySpawn', {
   configurable: true,
   get(this: Creep) {
-    const spawnTile = _.find(this.nearbyTiles, ({ tile }) => (tile.structures.spawn || []).length > 0)
-    if (spawnTile !== undefined) { return _.first(spawnTile.tile.structures.spawn) as Spawn }
+    if (this._nearbySpawn === undefined) {
+      const spawnTile = _.find(this.nearbyTiles, ({ tile }) => (tile.structures.spawn || []).length > 0)
+      if (spawnTile !== undefined) { this._nearbySpawn = _.first(spawnTile.tile.structures.spawn) as Spawn }
+    }
+    return this._nearbySpawn
   }
 })
 
@@ -121,13 +144,20 @@ Object.defineProperty(Creep.prototype, 'nearbyTiles', {
 Object.defineProperty(Creep.prototype, 'isSearching', {
   configurable: true,
   get(this: Creep) {
-    if (this.memory.isSearching === undefined) { this.memory.isSearching = true }
-    return this.memory.isSearching
+    if (this._isSearching === undefined) {
+      if (this.memory.isSearching !== undefined) {
+        this._isSearching = this.memory.isSearching
+      } else {
+        this._isSearching = true
+      }
+    }
+    return this._isSearching
   },
   set(this: Creep, value: boolean) {
     this.stepsFromLastSite = 0
     this.lastDirection = undefined
     this.memory.isSearching = value
+    this._isSearching = value
   }
 })
 
