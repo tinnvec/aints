@@ -1,5 +1,7 @@
 # AInts (WIP)
 
+![](image.png)
+
 Screeps AI using ants and other social colony insects as a model.
 
 ## Foraging
