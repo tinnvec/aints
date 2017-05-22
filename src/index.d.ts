@@ -8,6 +8,14 @@ declare const __REVISION__: string;
 // --- Interfaces ---
 
 interface Creep {
+  _currentDepositPheromone?: string
+  _currentSearchPheromone?: string
+  _directionPriorities?: number[]
+  _isCaryingEnergy?: boolean
+  _isHarvesting?: boolean
+  _isSearching?: boolean
+  _nearbySource?: Source
+  _nearbySpawn?: Spawn
   _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
   readonly isCarryingEnergy: boolean
   readonly currentDepositPheromone: string | undefined
@@ -48,8 +56,11 @@ interface PheromoneNetwork {
 }
 
 interface Room {
+  _lookTiles?: LookTile[]
   _pheromoneNetwork?: PheromoneNetwork
+  readonly lookTiles: LookTile[]
   readonly pheromoneNetwork: PheromoneNetwork
+  getLookTile(x: number, y: number): LookTile | undefined
 }
 
 interface Structure {

@@ -14,66 +14,26 @@ export default class LookTile extends RoomPosition {
   constructor(x: number, y: number, roomName: string) {
     super(x, y, roomName)
 
-    this.constructionSites = {}
-    this.creeps = []
-    this.pheromones = {}
-    this.sources = []
-    this.structures = {}
-    this.terrain = []
-
     this.room = Game.rooms[roomName]
 
-    for (const lookResult of this.look()) {
-      switch (lookResult.type) {
-        case LOOK_CREEPS:
-          if (lookResult.creep === undefined) { break }
-          this.creeps.push(lookResult.creep)
-          break
-        // case LOOK_ENERGY:
-        // case LOOK_RESOURCES:
-        case LOOK_SOURCES:
-          if (lookResult.source === undefined) { break }
-          this.sources.push(lookResult.source)
-          break
-        // case LOOK_MINERALS:
-        case LOOK_STRUCTURES:
-          if (lookResult.structure === undefined) { break }
-          const structure = lookResult.structure
-          const structureType = structure.structureType
-          if (this.structures[structureType] === undefined) { this.structures[structureType] = [] }
-          this.structures[structureType].push(structure)
-          break
-        // case LOOK_FLAGS:
-        case LOOK_CONSTRUCTION_SITES:
-          if (lookResult.constructionSite === undefined) { break }
-          const constructionSite = lookResult.constructionSite
-          const csStructureType = constructionSite.structureType
-          if (this.constructionSites[csStructureType] === undefined) { this.constructionSites[csStructureType] = [] }
-          this.constructionSites[csStructureType].push(constructionSite)
-          break
-        // case LOOK_NUKES:
-        case LOOK_TERRAIN:
-          if (lookResult.terrain === undefined) { break }
-          this.terrain.push(lookResult.terrain)
-          break
-        // case 'exit':
-        default:
-      }
-    }
+    this.creeps = this.lookFor<Creep>(LOOK_CREEPS)
+    this.sources = this.lookFor<Source>(LOOK_SOURCES)
+    this.terrain = this.lookFor<string>(LOOK_TERRAIN)
 
+    this.constructionSites =
+      _.groupBy(this.lookFor<ConstructionSite>(LOOK_CONSTRUCTION_SITES), ({ structureType }) => structureType)
+    this.structures = _.groupBy(this.lookFor<Structure>(LOOK_STRUCTURES), ({ structureType }) => structureType)
+
+    this.pheromones = {}
     for (const type in this.room.pheromoneNetwork.layers) {
       this.pheromones[type] = this.room.pheromoneNetwork.getLevel(type, this.x, this.y)
     }
   }
 
   public isWalkable(ignoreCreeps?: boolean) {
-    if (
-      _.includes(this.terrain, 'wall') ||
-      (!ignoreCreeps && this.creeps.length > 0) ||
-      _.intersection(_.union(_.keys(this.structures), _.keys(this.constructionSites)), OBSTACLE_OBJECT_TYPES).length > 0
-    ) {
-      return false
-    }
+    if (_.includes(this.terrain, 'wall')) { return false }
+    if (!ignoreCreeps && this.creeps.length > 0) { return false }
+    if (_.intersection(_.keys(this.structures), OBSTACLE_OBJECT_TYPES).length > 0) { return false }
     return true
   }
 }
