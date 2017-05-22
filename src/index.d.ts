@@ -17,10 +17,10 @@ interface Creep {
   _nearbySource?: Source
   _nearbySpawn?: Spawn
   _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
-  readonly isCarryingEnergy: boolean
   readonly currentDepositPheromone: string | undefined
   readonly currentSearchPheromone: string
   readonly directionPriorities: number[]
+  readonly isCarryingEnergy: boolean
   readonly isHarvesting: boolean
   readonly nearbySource?: Source
   readonly nearbySpawn?: Spawn
@@ -35,7 +35,7 @@ interface Creep {
   searchMove(): boolean
 }
 
-interface LookTile {
+interface LookTile extends RoomPosition {
   readonly constructionSites: { [structureType: string]: ConstructionSite[] }
   readonly creeps: Creep[]
   readonly pheromones: { [type: string]: number }
@@ -60,6 +60,8 @@ interface Room {
   _pheromoneNetwork?: PheromoneNetwork
   readonly lookTiles: LookTile[]
   readonly pheromoneNetwork: PheromoneNetwork
+  run(): void
+  draw(): void
   getLookTile(x: number, y: number): LookTile | undefined
 }
 
