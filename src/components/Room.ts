@@ -45,7 +45,7 @@ Room.prototype.run = function(this: Room) {
 
 Room.prototype.draw = function(this: Room) {
   if (Config.ENABLE_PHEROMONE_VISUALS) {
-    this.pheromoneNetwork.draw('home', '#47AFFF')
+    this.pheromoneNetwork.draw('home', '#386CA7')
     this.pheromoneNetwork.draw('energy', '#FFE87B')
   }
 }
