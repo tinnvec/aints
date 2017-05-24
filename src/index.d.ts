@@ -14,9 +14,13 @@ interface Creep {
   _isCaryingEnergy?: boolean
   _isHarvesting?: boolean
   _isSearching?: boolean
+  _lastDirection?: number
+  _lastMoveWasSuccessful?: boolean
+  _lastPheromoneDepositAmount?: number
   _nearbySource?: Source
   _nearbySpawn?: Spawn
   _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
+  _stepsFromLastSite?: number
   readonly currentDepositPheromone: string | undefined
   readonly currentSearchPheromone: string
   readonly directionPriorities: number[]

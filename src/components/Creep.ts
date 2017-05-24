@@ -144,63 +144,95 @@ Object.defineProperty(Creep.prototype, 'nearbyTiles', {
 Object.defineProperty(Creep.prototype, 'isSearching', {
   configurable: true,
   get(this: Creep) {
+    if (this._isSearching === undefined && this.memory.isSearching !== undefined) {
+      this._isSearching = this.memory.isSearching
+    }
     if (this._isSearching === undefined) {
-      if (this.memory.isSearching !== undefined) {
-        this._isSearching = this.memory.isSearching
-      } else {
-        this._isSearching = true
-      }
+      this._isSearching = true
     }
     return this._isSearching
   },
   set(this: Creep, value: boolean) {
-    this.stepsFromLastSite = 0
-    this.memory.isSearching = value
     this._isSearching = value
-  }
-})
-
-Object.defineProperty(Creep.prototype, 'lastPheromoneDepositAmount', {
-  configurable: true,
-  get(this: Creep) {
-    if (this.memory.lastPheromoneDepositAmount === undefined) { this.memory.lastPheromoneDepositAmount = 0 }
-    return this.memory.lastPheromoneDepositAmount
-  },
-  set(this: Creep, value: number) {
-    this.memory.lastPheromoneDepositAmount = value
-  }
-})
-
-Object.defineProperty(Creep.prototype, 'lastMoveWasSuccessful', {
-  configurable: true,
-  get(this: Creep) {
-    if (this.memory.lastMoveWasSuccessful === undefined) { this.memory.lastMoveWasSuccessful = true }
-    return this.memory.lastMoveWasSuccessful
-  },
-  set(this: Creep, value: boolean) {
-    this.memory.lastMoveWasSuccessful = value
+    this.memory.isSearching = this._isSearching
+    this.stepsFromLastSite = 0
   }
 })
 
 Object.defineProperty(Creep.prototype, 'lastDirection', {
   configurable: true,
   get(this: Creep) {
-    if (this.memory.lastDirection === undefined) { return undefined }
-    return this.memory.lastDirection
+    if (this._lastDirection === undefined && this.memory.lastDirection !== undefined) {
+      this._lastDirection = this.memory.lastDirection
+    }
+    if (this.memory.lastDirection !== this._lastDirection) {
+      this.memory.lastDirection = this._lastDirection
+    }
+    return this._lastDirection
   },
   set(this: Creep, value: number | undefined) {
-    this.memory.lastDirection = value
+    this._lastDirection = value
+    this.memory.lastDirection = this._lastDirection
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'lastMoveWasSuccessful', {
+  configurable: true,
+  get(this: Creep) {
+    if (this._lastMoveWasSuccessful === undefined && this.memory.lastMoveWasSuccessful !== undefined) {
+      this._lastMoveWasSuccessful = this.memory.lastMoveWasSuccessful
+    }
+    if (this._lastMoveWasSuccessful === undefined) {
+      this._lastMoveWasSuccessful = true
+    }
+    if (this.memory.lastMoveWasSuccessful !== this._lastMoveWasSuccessful) {
+      this.memory.lastMoveWasSuccessful = this._lastMoveWasSuccessful
+    }
+    return this._lastMoveWasSuccessful
+  },
+  set(this: Creep, value: boolean) {
+    this.memory.lastMoveWasSuccessful = value
+    this.memory.lastMoveWasSuccessful = this._lastMoveWasSuccessful
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'lastPheromoneDepositAmount', {
+  configurable: true,
+  get(this: Creep) {
+    if (this._lastPheromoneDepositAmount === undefined && this.memory.lastPheromoneDepositAmount !== undefined) {
+      this._lastPheromoneDepositAmount = this.memory.lastPheromoneDepositAmount
+    }
+    if (this._lastPheromoneDepositAmount === undefined) {
+      this._lastPheromoneDepositAmount = 0
+    }
+    if (this.memory.lastPheromoneDepositAmount !== this._lastPheromoneDepositAmount) {
+      this.memory.lastPheromoneDepositAmount = this._lastPheromoneDepositAmount
+    }
+    return this._lastPheromoneDepositAmount
+  },
+  set(this: Creep, value: number) {
+    this._lastPheromoneDepositAmount = value
+    this.memory.lastPheromoneDepositAmount = this._lastPheromoneDepositAmount
   }
 })
 
 Object.defineProperty(Creep.prototype, 'stepsFromLastSite', {
   configurable: true,
   get(this: Creep) {
-    if (this.memory.stepsFromLastSite === undefined) { this.memory.stepsFromLastSite = 0 }
-    return this.memory.stepsFromLastSite
+    if (this._stepsFromLastSite === undefined && this.memory.stepsFromLastSite !== undefined) {
+      this._stepsFromLastSite = this.memory.stepsFromLastSite
+    }
+    if (this._stepsFromLastSite === undefined) {
+      this._stepsFromLastSite = 0
+    }
+    if (this.memory.stepsFromLastSite !== this._stepsFromLastSite) {
+      this.memory.stepsFromLastSite = this._stepsFromLastSite
+    }
+    return this._stepsFromLastSite
   },
   set(this: Creep, value: number) {
-    this.memory.stepsFromLastSite = value
+    this._stepsFromLastSite = value
+    this.memory.stepsFromLastSite = this._stepsFromLastSite
   }
 })
 
