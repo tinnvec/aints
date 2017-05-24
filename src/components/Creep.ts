@@ -161,6 +161,17 @@ Object.defineProperty(Creep.prototype, 'isSearching', {
   }
 })
 
+Object.defineProperty(Creep.prototype, 'lastPheromoneDepositAmount', {
+  configurable: true,
+  get(this: Creep) {
+    if (this.memory.lastPheromoneDepositAmount === undefined) { this.memory.lastPheromoneDepositAmount = 0 }
+    return this.memory.lastPheromoneDepositAmount
+  },
+  set(this: Creep, value: number) {
+    this.memory.lastPheromoneDepositAmount = value
+  }
+})
+
 Object.defineProperty(Creep.prototype, 'lastMoveWasSuccessful', {
   configurable: true,
   get(this: Creep) {

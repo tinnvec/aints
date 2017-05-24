@@ -26,6 +26,7 @@ interface Creep {
   readonly nearbySpawn?: Spawn
   readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
   isSearching: boolean
+  lastPheromoneDepositAmount: number
   lastMoveWasSuccessful: boolean
   lastDirection?: number
   stepsFromLastSite: number
