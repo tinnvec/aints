@@ -1,3 +1,4 @@
+import * as Config from '../config/config'
 import Profile from '../lib/screeps-profiler/Profile'
 
 @Profile
@@ -79,17 +80,19 @@ export default class PheromoneNetwork {
     const vis = new RoomVisual(this.room.name)
     let x: number
     let y: number
-    let size: number
-    let max = 0
+    let str: number
     for (y = 0; y < 50; ++y) {
       for (x = 0; x < 50; ++x) {
-        max = Math.max(max, cm.get(x, y))
-      }
-    }
-    for (y = 0; y < 50; ++y) {
-      for (x = 0; x < 50; ++x) {
-        size = cm.get(x, y)
-        if (size > 0) { vis.circle(x, y, { fill: color, opacity: 0.2, radius: (size / max) / 2 }) }
+        str = cm.get(x, y)
+        if (str > 0) {
+          vis.circle(x, y, {
+            fill: color,
+            opacity: 1 / ((Object.keys(this.layers).length) * 2),
+            radius: (str / Config.MAX_TILE_PHEROMONE_LEVEL) / 2,
+            stroke: color,
+            strokeWidth: 0.1,
+          })
+        }
       }
     }
   }
