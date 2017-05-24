@@ -30,9 +30,9 @@ interface Creep {
   readonly nearbySpawn?: Spawn
   readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
   isSearching: boolean
-  lastPheromoneDepositAmount: number
-  lastMoveWasSuccessful: boolean
   lastDirection?: number
+  lastMoveWasSuccessful: boolean
+  lastPheromoneDepositAmount: number
   stepsFromLastSite: number
   run(): void
   depositPheromone(): number

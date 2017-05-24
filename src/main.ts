@@ -1,6 +1,5 @@
-import * as Config from './config/config'
-
 import * as Profiler from 'screeps-profiler'
+import * as Config from './config/config'
 import { log } from './lib/logger/log'
 
 import './components/Creep'
