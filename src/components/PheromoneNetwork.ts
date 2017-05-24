@@ -16,7 +16,6 @@ export default class PheromoneNetwork {
   constructor(room: Room) {
     this.room = room
     this.layers = {
-      controller: new PathFinder.CostMatrix(),
       energy: new PathFinder.CostMatrix(),
       home: new PathFinder.CostMatrix()
     }
@@ -59,7 +58,7 @@ export default class PheromoneNetwork {
   }
 
   public dissipate() {
-    const rate = 0.01
+    const rate = 1
     let x: number
     let y: number
     for (const type in this.layers) {
@@ -67,8 +66,7 @@ export default class PheromoneNetwork {
         for (y = 0; y < 50; y++) {
           const curr = this.layers[type].get(x, y)
           if (curr === 0) { continue }
-          const amt = Math.max(Math.floor(curr * rate), 1)
-          this.layers[type].set(x, y, Math.max(curr - amt, 0))
+          this.layers[type].set(x, y, curr - rate)
         }
       }
       this.room.memory.pheromoneNetwork.layers[type] = this.layers[type].serialize()
@@ -76,14 +74,12 @@ export default class PheromoneNetwork {
   }
 
   public draw(layer: string, color: string = '#CCCCCC') {
-    const cm = this.layers[layer]
     const vis = new RoomVisual(this.room.name)
     let x: number
     let y: number
-    let str: number
     for (y = 0; y < 50; ++y) {
       for (x = 0; x < 50; ++x) {
-        str = cm.get(x, y)
+        const str = this.getLevel(layer, x, y)
         if (str > 0) {
           vis.circle(x, y, {
             fill: color,
