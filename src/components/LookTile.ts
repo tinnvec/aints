@@ -26,7 +26,7 @@ export default class LookTile extends RoomPosition {
 
     this.pheromones = {}
     for (const type in this.room.pheromoneNetwork.layers) {
-      this.pheromones[type] = this.room.pheromoneNetwork.getLevel(type, this.x, this.y)
+      this.pheromones[type] = this.room.pheromoneNetwork.getTileLevel(type, this.x, this.y)
     }
   }
 

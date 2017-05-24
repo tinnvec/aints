@@ -52,11 +52,11 @@ interface LookTile extends RoomPosition {
 
 interface PheromoneNetwork {
   readonly layers: { [type: string]: CostMatrix }
+  decay(): void
   diffuse(): void
-  dissipate(): void
   draw(type: string, color?: string): void
-  getLevel(type: string, x: number, y: number): number
-  increaseLevel(type: string, x: number, y: number, amount: number): void
+  getTileLevel(type: string, x: number, y: number): number
+  setTileLevel(type: string, x: number, y: number, amount: number): void
   serialize(): { layers: { [type: string]: number[] }, roomName: string }
 }
 

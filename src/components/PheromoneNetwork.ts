@@ -21,6 +21,21 @@ export default class PheromoneNetwork {
     }
   }
 
+  public decay() {
+    const rate = 1
+    let x: number
+    let y: number
+    for (const type in this.layers) {
+      for (x = 0; x < 50; x++) {
+        for (y = 0; y < 50; y++) {
+          const curr = this.layers[type].get(x, y)
+          if (curr === 0) { continue }
+          this.layers[type].set(x, y, curr - rate)
+        }
+      }
+    }
+  }
+
   public diffuse() {
     const rate = 0.01
     const min = 4
@@ -53,23 +68,6 @@ export default class PheromoneNetwork {
           this.layers[type].set(x, y, Math.max(curr - amt, 0))
         }
       }
-      this.room.memory.pheromoneNetwork.layers[type] = this.layers[type].serialize()
-    }
-  }
-
-  public dissipate() {
-    const rate = 1
-    let x: number
-    let y: number
-    for (const type in this.layers) {
-      for (x = 0; x < 50; x++) {
-        for (y = 0; y < 50; y++) {
-          const curr = this.layers[type].get(x, y)
-          if (curr === 0) { continue }
-          this.layers[type].set(x, y, curr - rate)
-        }
-      }
-      this.room.memory.pheromoneNetwork.layers[type] = this.layers[type].serialize()
     }
   }
 
@@ -79,12 +77,12 @@ export default class PheromoneNetwork {
     let y: number
     for (y = 0; y < 50; ++y) {
       for (x = 0; x < 50; ++x) {
-        const str = this.getLevel(layer, x, y)
+        const str = this.getTileLevel(layer, x, y)
         if (str > 0) {
           vis.circle(x, y, {
             fill: color,
             opacity: 1 / ((Object.keys(this.layers).length) * 2),
-            radius: (str / Config.MAX_TILE_PHEROMONE_LEVEL) / 2,
+            radius: str / (Config.PHEROMONE_MAX_TILE_AMOUNT * 2),
             stroke: color,
             strokeWidth: 0.1,
           })
@@ -93,13 +91,9 @@ export default class PheromoneNetwork {
     }
   }
 
-  public getLevel(type: string, x: number, y: number): number { return this.layers[type].get(x, y) }
+  public getTileLevel(type: string, x: number, y: number) { return this.layers[type].get(x, y) }
 
-  public increaseLevel(type: string, x: number, y: number, amount: number) {
-    const current = this.getLevel(type, x, y)
-    this.layers[type].set(x, y, current + amount)
-    this.room.memory.pheromoneNetwork.layers[type] = this.layers[type].serialize()
-  }
+  public setTileLevel(type: string, x: number, y: number, level: number) { this.layers[type].set(x, y, level) }
 
   public serialize(): { layers: { [type: string]: number[] }, roomName: string } {
     const resultLayers: { [type: string]: number[] } = {}
