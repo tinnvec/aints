@@ -73,7 +73,7 @@ Object.defineProperty(Creep.prototype, 'directionPriorities', {
           this._directionPriorities =
             _.shuffle([TOP, TOP_LEFT, TOP_RIGHT, LEFT, RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, BOTTOM])
       }
-      if (this.lastDirection !== undefined && this._directionPriorities.length < 8 && this.isCarryingEnergy) {
+      if (this.lastDirection !== undefined && this._directionPriorities.length < 8) {
         this._directionPriorities.push(this.lastDirection)
       }
     }
@@ -133,7 +133,7 @@ Object.defineProperty(Creep.prototype, 'nearbyTiles', {
         const nx = x + dx
         const ny = y + dy
         const tile = this.room.getLookTile(nx, ny)
-        if (tile === undefined) { return }
+        if (tile === undefined) { continue }
         this._nearbyTiles.push({ dir: parseInt(dir, 10), tile })
       }
     }
@@ -155,7 +155,6 @@ Object.defineProperty(Creep.prototype, 'isSearching', {
   },
   set(this: Creep, value: boolean) {
     this.stepsFromLastSite = 0
-    this.lastDirection = undefined
     this.memory.isSearching = value
     this._isSearching = value
   }
@@ -210,54 +209,60 @@ Object.defineProperty(Creep.prototype, 'stepsFromLastSite', {
 Creep.prototype.run = function(this: Creep) {
   if (this.spawning) { return }
 
-  // Check for spawn near and no energy to reset search
-  if (this.nearbySpawn !== undefined && !this.isCarryingEnergy) { this.isSearching = true }
-  // Check harvesting and carrying energy to suppress search
-  if (this.isHarvesting && this.isCarryingEnergy) { this.isSearching = false }
   // Check fatigue
   if (this.fatigue > 0 && this.lastMoveWasSuccessful) { this.stepsFromLastSite++ }
 
+  // Check for spawn near and no energy to reset search
+  if (this.nearbySpawn !== undefined && !this.isCarryingEnergy) { this.isSearching = true }
+  // Check harvesting and carrying energy to suppress search
+  if (this.isHarvesting && this.isCarryingEnergy) {
+    this.lastDirection = undefined
+    this.isSearching = false
+  }
+
   // Deposit pheromone
-  if (this.lastMoveWasSuccessful) { this.depositPheromone() }
+  if (this.lastMoveWasSuccessful) { this.lastPheromoneDepositAmount = this.depositPheromone() }
 
   // Check for spawn to transfer to
   if (this.nearbySpawn !== undefined) { this.transfer(this.nearbySpawn, RESOURCE_ENERGY) }
   // Check for harvesting
   if (this.isHarvesting) { this.harvest(this.nearbySource!) }
   // Check for max search length
-  if (this.isSearching && this.stepsFromLastSite >= Config.MAX_SEARCH_STEPS) { this.isSearching = false }
+  if (this.isSearching && this.stepsFromLastSite >= Config.SEARCH_MAX_STEPS) {
+    this.lastDirection = undefined
+    this.isSearching = false
+  }
 
   // Move
-  if (!this.isHarvesting) { this.lastMoveWasSuccessful = this.searchMove() }
+  if (!this.isHarvesting && this.fatigue < 1) { this.lastMoveWasSuccessful = this.searchMove() }
 }
 
 Creep.prototype.depositPheromone = function(this: Creep): number {
   if (this.currentDepositPheromone === undefined) { return 0 }
-  const currentDepositLevel = this.room.pheromoneNetwork.getLevel(this.currentDepositPheromone, this.pos.x, this.pos.y)
-  const maxDepositAmount = Config.MAX_TILE_PHEROMONE_LEVEL - (this.stepsFromLastSite * Config.PHEROMONE_DEPOSIT_RATE)
-  const depositAmount = Math.max(0, maxDepositAmount - currentDepositLevel)
-  if (depositAmount <= 0) { return 0 }
-  this.room.pheromoneNetwork.increaseLevel(this.currentDepositPheromone, this.pos.x, this.pos.y, depositAmount)
+  const currentDepositLevel = this.room.pheromoneNetwork
+    .getTileLevel(this.currentDepositPheromone, this.pos.x, this.pos.y)
+  const depositAmount = Config.PHEROMONE_MAX_TILE_AMOUNT -
+    (this.stepsFromLastSite * Config.PHEROMONE_MIN_DEPOSIT_AMOUNT)
+  if (depositAmount < currentDepositLevel) { return 0 }
+  this.room.pheromoneNetwork.setTileLevel(this.currentDepositPheromone, this.pos.x, this.pos.y, depositAmount)
   return depositAmount
 }
 
 Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
-  return _(this.nearbyTiles)
-    .filter(({ dir, tile }) =>
-      this.directionPriorities.indexOf(dir) !== -1 &&
-      tile.isWalkable(this.isCarryingEnergy ? true : Math.random() < 0.25)
-    )
-    .sort((a, b) => this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir))
-    .map(({ dir, tile }) => {
-      const depositPheromoneLevel = this.currentDepositPheromone !== undefined ?
-        tile.pheromones[this.currentDepositPheromone] : 0
-      const searchPheromoneLevel = tile.pheromones[this.currentSearchPheromone]
-      return { dir, level: (2 * searchPheromoneLevel) - depositPheromoneLevel }
-    }).max(({ level }) => level).dir
+  const walkableTiles = _.filter(this.nearbyTiles, ({ dir, tile }) =>
+    this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(this.isCarryingEnergy ? true : Math.random() < 0.3)
+  ).sort((a, b) => this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir))
+  const dirLevels = _.map(walkableTiles, ({ dir, tile }) => {
+    const searchPheromoneLevel = tile.pheromones[this.currentSearchPheromone]
+    const depositPheromoneLevel = this.currentDepositPheromone !== undefined ?
+      tile.pheromones[this.currentDepositPheromone] : 0
+    return { dir, level: (searchPheromoneLevel * 3) - depositPheromoneLevel }
+  })
+  const result = _.max(dirLevels, ({ level }) => level)
+  return result.dir
 }
 
 Creep.prototype.searchMove = function(this: Creep): boolean {
-  if (this.fatigue > 0 && this.lastMoveWasSuccessful) { return true }
   const dir = this.getSearchPheromoneDirection()
   if (this.move(dir) === OK) {
     this.lastDirection = dir

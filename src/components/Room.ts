@@ -31,16 +31,7 @@ Object.defineProperty(Room.prototype, 'pheromoneNetwork', {
 // --- Methods ---
 
 Room.prototype.run = function(this: Room) {
-  switch (Game.time % 6) {
-    case 0:
-      this.pheromoneNetwork.dissipate()
-      break
-    case 2:
-    case 4:
-      this.pheromoneNetwork.diffuse()
-      break
-    default:
-  }
+  if (Game.time % Config.PHEROMONE_DECAY_TIME === 0) { this.pheromoneNetwork.decay() }
 }
 
 Room.prototype.draw = function(this: Room) {
