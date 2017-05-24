@@ -66,6 +66,7 @@ interface Room {
   readonly lookTiles: LookTile[]
   readonly pheromoneNetwork: PheromoneNetwork
   run(): void
+  store(): void
   draw(): void
   getLookTile(x: number, y: number): LookTile | undefined
 }

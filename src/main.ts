@@ -43,6 +43,9 @@ function mloop() {
   _.invoke(Game.structures, 'run')
   _.invoke(Game.creeps, 'run')
 
+  // Save Room memory
+  _.invoke(Game.rooms, 'store')
+
   // Draw Rooms
   _.invoke(Game.rooms, 'draw')
 }

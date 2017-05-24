@@ -21,9 +21,6 @@ Object.defineProperty(Room.prototype, 'pheromoneNetwork', {
     if (this._pheromoneNetwork === undefined) {
       this._pheromoneNetwork = new PheromoneNetwork(this)
     }
-    if (this.memory.pheromoneNetwork === undefined) {
-      this.memory.pheromoneNetwork = this._pheromoneNetwork.serialize()
-    }
     return this._pheromoneNetwork
   }
 })
@@ -32,6 +29,10 @@ Object.defineProperty(Room.prototype, 'pheromoneNetwork', {
 
 Room.prototype.run = function(this: Room) {
   if (Game.time % Config.PHEROMONE_DECAY_TIME === 0) { this.pheromoneNetwork.decay() }
+}
+
+Room.prototype.store = function(this: Room) {
+  this.memory.pheromoneNetwork = this.pheromoneNetwork.serialize()
 }
 
 Room.prototype.draw = function(this: Room) {
