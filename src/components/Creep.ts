@@ -284,13 +284,25 @@ Object.defineProperty(Creep.prototype, 'stepsFromLastSite', {
 Creep.prototype.run = function(this: Creep) {
   if (this.spawning) { return }
 
-  // Check fatigue
   if (this.fatigue > 0 && this.lastMoveWasSuccessful) { this.stepsFromLastSite++ }
 
-  // Check for spawn near and no energy to reset search
-  if (this.nearbySpawn !== undefined && !this.isCarryingEnergy) { this.isSearching = true }
-  // Check harvesting and carrying energy to suppress search
-  if (this.isHarvesting && this.isCarryingEnergy) {
+  if (this.nearbySpawn !== undefined) {
+    const spawnFull = (this.carry.energy || 0) + this.nearbySpawn.energy > this.nearbySpawn.energyCapacity
+    this.currentSearchPheromone = spawnFull ? 'controller' : 'energy'
+    this.currentDepositPheromone = 'home'
+    this.isSearching = true
+  }
+
+  if (this.isHarvesting) {
+    this.currentDepositPheromone = 'energy'
+    this.currentSearchPheromone = 'home'
+    this.lastDirection = undefined
+    this.isSearching = false
+  }
+
+  if (this.isUpgrading) {
+    this.currentDepositPheromone = 'controller'
+    this.currentSearchPheromone = 'home'
     this.lastDirection = undefined
     this.isSearching = false
   }
@@ -302,14 +314,19 @@ Creep.prototype.run = function(this: Creep) {
   if (this.nearbySpawn !== undefined) { this.transfer(this.nearbySpawn, RESOURCE_ENERGY) }
   // Check for harvesting
   if (this.isHarvesting) { this.harvest(this.nearbySource!) }
+  // Check for upgrading
+  if (this.isUpgrading) { this.upgradeController(this.nearbyController!) }
+
   // Check for max search length
   if (this.isSearching && this.stepsFromLastSite >= Config.SEARCH_MAX_STEPS) {
+    this.currentDepositPheromone = undefined
+    this.currentSearchPheromone = 'home'
     this.lastDirection = undefined
     this.isSearching = false
   }
 
   // Move
-  if (!this.isHarvesting && this.fatigue < 1) { this.lastMoveWasSuccessful = this.searchMove() }
+  if (!this.isHarvesting && !this.isUpgrading && this.fatigue < 1) { this.lastMoveWasSuccessful = this.searchMove() }
 }
 
 Creep.prototype.depositPheromone = function(this: Creep): number {
