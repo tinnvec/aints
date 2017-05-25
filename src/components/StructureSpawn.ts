@@ -1,6 +1,6 @@
 // --- Constants ---
 
-const CREEP_BODY = [MOVE, WORK, CARRY, MOVE]
+const CREEP_BODY = [MOVE, MOVE, WORK, CARRY, MOVE]
 
 // --- Methods ---
 
