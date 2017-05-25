@@ -15,20 +15,40 @@ Object.defineProperty(Creep.prototype, 'isCarryingEnergy', {
 Object.defineProperty(Creep.prototype, 'currentDepositPheromone', {
   configurable: true,
   get(this: Creep) {
+    if (this._currentDepositPheromone === undefined && this.memory.currentDepositPheromone !== undefined) {
+      this._currentDepositPheromone = this.memory.currentDepositPheromone
+    }
     if (this._currentDepositPheromone === undefined) {
-      this._currentDepositPheromone = this.isSearching ? 'home' : this.isCarryingEnergy ? 'energy' : undefined
+      this._currentDepositPheromone = this.isSearching ? 'home' : undefined
+    }
+    if (this.memory.currentDepositPheromone !== this._currentDepositPheromone) {
+      this.memory.currentDepositPheromone = this._currentDepositPheromone
     }
     return this._currentDepositPheromone
+  },
+  set(this: Creep, value: string) {
+    this._currentDepositPheromone = value
+    this.memory.currentDepositPheromone = this._currentDepositPheromone
   }
 })
 
 Object.defineProperty(Creep.prototype, 'currentSearchPheromone', {
   configurable: true,
   get(this: Creep) {
+    if (this._currentSearchPheromone === undefined && this.memory.currentSearchPheromone !== undefined) {
+      this._currentSearchPheromone = this.memory.currentSearchPheromone
+    }
     if (this._currentSearchPheromone === undefined) {
       this._currentSearchPheromone = this.isSearching ? 'energy' : 'home'
     }
+    if (this.memory.currentSearchPheromone !== this._currentSearchPheromone) {
+      this.memory.currentSearchPheromone = this._currentSearchPheromone
+    }
     return this._currentSearchPheromone
+  },
+  set(this: Creep, value: string) {
+    this._currentSearchPheromone = value
+    this.memory.currentSearchPheromone = this._currentSearchPheromone
   }
 })
 
@@ -92,6 +112,16 @@ Object.defineProperty(Creep.prototype, 'isHarvesting', {
   }
 })
 
+Object.defineProperty(Creep.prototype, 'isUpgrading', {
+  configurable: true,
+  get(this: Creep) {
+    if (this._isUpgrading === undefined) {
+      this._isUpgrading = this.nearbyController !== undefined && this.nearbyController.my && this.isCarryingEnergy
+    }
+    return this._isUpgrading
+  }
+})
+
 Object.defineProperty(Creep.prototype, 'nearbySource', {
   configurable: true,
   get(this: Creep) {
@@ -114,6 +144,19 @@ Object.defineProperty(Creep.prototype, 'nearbySpawn', {
       if (spawnTile !== undefined) { this._nearbySpawn = _.first(spawnTile.tile.structures.spawn) as Spawn }
     }
     return this._nearbySpawn
+  }
+})
+
+Object.defineProperty(Creep.prototype, 'nearbyController', {
+  configurable: true,
+  get(this: Creep) {
+    if (this._nearbyController === undefined) {
+      const controllerTile = _.find(this.nearbyTiles, ({ tile }) => (tile.structures.controller || []).length > 0)
+      if (controllerTile !== undefined) {
+        this._nearbyController = _.first(controllerTile.tile.structures.controller) as Controller
+      }
+    }
+    return this._nearbyController
   }
 })
 
@@ -241,13 +284,25 @@ Object.defineProperty(Creep.prototype, 'stepsFromLastSite', {
 Creep.prototype.run = function(this: Creep) {
   if (this.spawning) { return }
 
-  // Check fatigue
   if (this.fatigue > 0 && this.lastMoveWasSuccessful) { this.stepsFromLastSite++ }
 
-  // Check for spawn near and no energy to reset search
-  if (this.nearbySpawn !== undefined && !this.isCarryingEnergy) { this.isSearching = true }
-  // Check harvesting and carrying energy to suppress search
-  if (this.isHarvesting && this.isCarryingEnergy) {
+  if (this.nearbySpawn !== undefined) {
+    const spawnFull = (this.carry.energy || 0) + this.nearbySpawn.energy > this.nearbySpawn.energyCapacity
+    this.currentSearchPheromone = spawnFull ? 'controller' : 'energy'
+    this.currentDepositPheromone = 'home'
+    this.isSearching = true
+  }
+
+  if (this.isHarvesting) {
+    this.currentDepositPheromone = 'energy'
+    this.currentSearchPheromone = 'home'
+    this.lastDirection = undefined
+    this.isSearching = false
+  }
+
+  if (this.isUpgrading) {
+    this.currentDepositPheromone = 'controller'
+    this.currentSearchPheromone = 'home'
     this.lastDirection = undefined
     this.isSearching = false
   }
@@ -259,14 +314,19 @@ Creep.prototype.run = function(this: Creep) {
   if (this.nearbySpawn !== undefined) { this.transfer(this.nearbySpawn, RESOURCE_ENERGY) }
   // Check for harvesting
   if (this.isHarvesting) { this.harvest(this.nearbySource!) }
+  // Check for upgrading
+  if (this.isUpgrading) { this.upgradeController(this.nearbyController!) }
+
   // Check for max search length
   if (this.isSearching && this.stepsFromLastSite >= Config.SEARCH_MAX_STEPS) {
+    this.currentDepositPheromone = undefined
+    this.currentSearchPheromone = 'home'
     this.lastDirection = undefined
     this.isSearching = false
   }
 
   // Move
-  if (!this.isHarvesting && this.fatigue < 1) { this.lastMoveWasSuccessful = this.searchMove() }
+  if (!this.isHarvesting && !this.isUpgrading && this.fatigue < 1) { this.lastMoveWasSuccessful = this.searchMove() }
 }
 
 Creep.prototype.depositPheromone = function(this: Creep): number {
@@ -282,7 +342,7 @@ Creep.prototype.depositPheromone = function(this: Creep): number {
 
 Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
   const walkableTiles = _.filter(this.nearbyTiles, ({ dir, tile }) =>
-    this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(this.isCarryingEnergy ? true : Math.random() < 0.3)
+    this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(this.isSearching ? Math.random() < 0.3 : true)
   ).sort((a, b) => this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir))
   const dirLevels = _.map(walkableTiles, ({ dir, tile }) => {
     const searchPheromoneLevel = tile.pheromones[this.currentSearchPheromone]

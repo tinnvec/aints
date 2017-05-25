@@ -16,6 +16,7 @@ export default class PheromoneNetwork {
   constructor(room: Room) {
     this.room = room
     this.layers = {
+      controller: new PathFinder.CostMatrix(),
       energy: new PathFinder.CostMatrix(),
       home: new PathFinder.CostMatrix()
     }
