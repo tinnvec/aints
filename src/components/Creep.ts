@@ -342,7 +342,7 @@ Creep.prototype.depositPheromone = function(this: Creep): number {
 
 Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
   const walkableTiles = _.filter(this.nearbyTiles, ({ dir, tile }) =>
-    this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(this.isCarryingEnergy ? true : Math.random() < 0.3)
+    this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(this.isSearching ? Math.random() < 0.3 : true)
   ).sort((a, b) => this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir))
   const dirLevels = _.map(walkableTiles, ({ dir, tile }) => {
     const searchPheromoneLevel = tile.pheromones[this.currentSearchPheromone]
