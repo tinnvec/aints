@@ -17,6 +17,7 @@ interface Creep {
   _lastDirection?: number
   _lastMoveWasSuccessful?: boolean
   _lastPheromoneDepositAmount?: number
+  _nearbyController?: Controller
   _nearbySource?: Source
   _nearbySpawn?: Spawn
   _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
@@ -26,6 +27,7 @@ interface Creep {
   readonly directionPriorities: number[]
   readonly isCarryingEnergy: boolean
   readonly isHarvesting: boolean
+  readonly nearbyController?: Controller
   readonly nearbySource?: Source
   readonly nearbySpawn?: Spawn
   readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>

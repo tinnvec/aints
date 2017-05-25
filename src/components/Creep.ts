@@ -117,6 +117,19 @@ Object.defineProperty(Creep.prototype, 'nearbySpawn', {
   }
 })
 
+Object.defineProperty(Creep.prototype, 'nearbyController', {
+  configurable: true,
+  get(this: Creep) {
+    if (this._nearbyController === undefined) {
+      const controllerTile = _.find(this.nearbyTiles, ({ tile }) => (tile.structures.controller || []).length > 0)
+      if (controllerTile !== undefined) {
+        this._nearbyController = _.first(controllerTile.tile.structures.controller) as Controller
+      }
+    }
+    return this._nearbyController
+  }
+})
+
 Object.defineProperty(Creep.prototype, 'nearbyTiles', {
   configurable: true,
   get(this: Creep) {
