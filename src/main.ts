@@ -16,13 +16,6 @@ if (Config.USE_PROFILER) { Profiler.enable() }
 log.info(`loading revision: ${ __REVISION__ }`)
 
 function mloop() {
-  for (const name in Memory.rooms) {
-    if (!Game.rooms[name]) {
-      log.info(`Clearing non-existing room from memory: ${name}`)
-      Memory.rooms[name] = undefined
-    }
-  }
-
   for (const name in Memory.structures) {
     if (!Game.structures[name]) {
       log.info(`Clearing non-existing structure from memory: ${name}`)
