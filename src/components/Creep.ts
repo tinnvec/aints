@@ -15,20 +15,40 @@ Object.defineProperty(Creep.prototype, 'isCarryingEnergy', {
 Object.defineProperty(Creep.prototype, 'currentDepositPheromone', {
   configurable: true,
   get(this: Creep) {
+    if (this._currentDepositPheromone === undefined && this.memory.currentDepositPheromone !== undefined) {
+      this._currentDepositPheromone = this.memory.currentDepositPheromone
+    }
     if (this._currentDepositPheromone === undefined) {
-      this._currentDepositPheromone = this.isSearching ? 'home' : this.isCarryingEnergy ? 'energy' : undefined
+      this._currentDepositPheromone = this.isSearching ? 'home' : undefined
+    }
+    if (this.memory.currentDepositPheromone !== this._currentDepositPheromone) {
+      this.memory.currentDepositPheromone = this._currentDepositPheromone
     }
     return this._currentDepositPheromone
+  },
+  set(this: Creep, value: string) {
+    this._currentDepositPheromone = value
+    this.memory.currentDepositPheromone = this._currentDepositPheromone
   }
 })
 
 Object.defineProperty(Creep.prototype, 'currentSearchPheromone', {
   configurable: true,
   get(this: Creep) {
+    if (this._currentSearchPheromone === undefined && this.memory.currentSearchPheromone !== undefined) {
+      this._currentSearchPheromone = this.memory.currentSearchPheromone
+    }
     if (this._currentSearchPheromone === undefined) {
       this._currentSearchPheromone = this.isSearching ? 'energy' : 'home'
     }
+    if (this.memory.currentSearchPheromone !== this._currentSearchPheromone) {
+      this.memory.currentSearchPheromone = this._currentSearchPheromone
+    }
     return this._currentSearchPheromone
+  },
+  set(this: Creep, value: string) {
+    this._currentSearchPheromone = value
+    this.memory.currentSearchPheromone = this._currentSearchPheromone
   }
 })
 

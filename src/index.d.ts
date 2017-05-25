@@ -23,8 +23,6 @@ interface Creep {
   _nearbySpawn?: Spawn
   _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
   _stepsFromLastSite?: number
-  readonly currentDepositPheromone: string | undefined
-  readonly currentSearchPheromone: string
   readonly directionPriorities: number[]
   readonly isCarryingEnergy: boolean
   readonly isHarvesting: boolean
@@ -33,6 +31,8 @@ interface Creep {
   readonly nearbySource?: Source
   readonly nearbySpawn?: Spawn
   readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
+  currentDepositPheromone?: string
+  currentSearchPheromone: string
   isSearching: boolean
   lastDirection?: number
   lastMoveWasSuccessful: boolean
