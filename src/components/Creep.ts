@@ -92,6 +92,16 @@ Object.defineProperty(Creep.prototype, 'isHarvesting', {
   }
 })
 
+Object.defineProperty(Creep.prototype, 'isUpgrading', {
+  configurable: true,
+  get(this: Creep) {
+    if (this._isUpgrading === undefined) {
+      this._isUpgrading = this.nearbyController !== undefined && this.nearbyController.my && this.isCarryingEnergy
+    }
+    return this._isUpgrading
+  }
+})
+
 Object.defineProperty(Creep.prototype, 'nearbySource', {
   configurable: true,
   get(this: Creep) {

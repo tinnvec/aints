@@ -14,6 +14,7 @@ interface Creep {
   _isCaryingEnergy?: boolean
   _isHarvesting?: boolean
   _isSearching?: boolean
+  _isUpgrading?: boolean
   _lastDirection?: number
   _lastMoveWasSuccessful?: boolean
   _lastPheromoneDepositAmount?: number
@@ -27,6 +28,7 @@ interface Creep {
   readonly directionPriorities: number[]
   readonly isCarryingEnergy: boolean
   readonly isHarvesting: boolean
+  readonly isUpgrading: boolean
   readonly nearbyController?: Controller
   readonly nearbySource?: Source
   readonly nearbySpawn?: Spawn
