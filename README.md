@@ -4,54 +4,25 @@
 
 Screeps AI using ants and other social colony insects as a model.
 
-## Foraging
+## Searching
 
-1. Check Surroundings
-    - Spawn nearby
-      - Creep empty
-        - Switch to/ensure search mode
-    - Source nearby
-      - Source not empty, creep not full nor empty
-        - Switch to/ensure homing mode
-    - Creep is fatigued
-      - Increase steps from last site
-2. Deposit Pheromone
-    - Amount
-      - Increase level to `(Max level - steps from last site) * per-step change`
-      - Max level
-        - `CostMatrix` max value (255)
-      - Min level
-        - Enough that the pheromone won't decay completely within longest action time (ie. harvesting)
-      - Per-step change
-        - `(max level - min level) / max search length`
-    - Pheromone type
-      - Search Mode
-        - homing pheromone
-      - Homing Mode
-        - previous search pheromone.
-        - If max search steps was reached, don't deposit pheromones while homing
-3. Take Action
-    - Spawn nearby
-      - Creep not empty
-        - Transfer energy to spawn
-    - Source nearby
-      - Creep not full
-        - Harvest energy
-    - Search too long
-      - Switch to homing mode
-4. Move
-    - Creep not harvesting nor fatigued
-      - Move to tile with highest value for `(2 * search pheromone) - deposit pheromone`
-        - Increase steps from last site on successful move
-
+1. Place pheromones for last visited site
+    - Reduced by steps taken since visiting the site
+2. Take Action if near site
+    - Transfer Energy
+    - Harvest Energy
+    - Upgrade Controller
+3. Move if not taking action or fatigued
+    - Chosen by highest level of pheromones being searched for and lowext level of pheromones being placed
 
 ## Spawning
 
-- Spawn as many creeps as possible
+- Single creep, capable of working and carrying
+- No limit
 
 ## Room Updates (Weather)
 
-- Dissipate each pheromone on each tile by 1 every other tick
+- Pheromone decay
 
 ---
 
@@ -71,6 +42,7 @@ Screeps AI using ants and other social colony insects as a model.
 - http://natureofcode.com/book
 - [Composite collective decision-making](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4590433/)
 - http://www.huffingtonpost.com/marc-bekoff/study-rats-empathy_b_1138675.html
+- [Structure and formation of ant transportation networks](http://rsif.royalsocietypublishing.org/content/8/62/1298)
 
 ---
 
