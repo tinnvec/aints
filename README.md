@@ -1,32 +1,28 @@
 # AInts (WIP)
 
+![](image.png)
+
 Screeps AI using ants and other social colony insects as a model.
 
-## Foraging
+## Searching
 
-1. Check Surroundings
-    - Spawn Exists
-      - Creep not empty - Transfer energy to spawn
-      - Creep empty - Switch to search mode
-    - Source Exits
-      - Creep not full - Harvest energy
-      - Creep full - Switch to homing mode
-2. Deposit Pheromone
-    - Amount - increase level to `(Max level - steps from last site) * per-step change`
-      - Max level - `CostMatrix` max value (255)
-      - Min level - Enough that the pheromone won't decay completely within longest action time (ie. harvesting)
-      - Per-step change - `(max level - min level) / max search length`
-    - Pheromone type
-      - Search Mode - homing pheromone
-      - Homing Mode - previous search pheromone.
-        - If max search steps was reached, don't deposit pheromones while homing
-3. Move
-    - Don't move if harvesting
-    - Move to tile with lowest value for `deposit pheromone - (2 * search pheromone)`
+1. Place pheromones for last visited site
+    - Reduced by steps taken since visiting the site
+2. Take Action if near site
+    - Transfer Energy
+    - Harvest Energy
+    - Upgrade Controller
+3. Move if not taking action or fatigued
+    - Chosen by highest level of pheromones being searched for and lowext level of pheromones being placed
 
 ## Spawning
 
-- Spawn as many creeps as possible
+- Single creep, capable of working and carrying
+- No limit
+
+## Room Updates (Weather)
+
+- Pheromone decay
 
 ---
 
@@ -46,3 +42,10 @@ Screeps AI using ants and other social colony insects as a model.
 - http://natureofcode.com/book
 - [Composite collective decision-making](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4590433/)
 - http://www.huffingtonpost.com/marc-bekoff/study-rats-empathy_b_1138675.html
+- [Structure and formation of ant transportation networks](http://rsif.royalsocietypublishing.org/content/8/62/1298)
+
+---
+
+## Thanks
+
+Forked with love from [screeps-typescript-starter](https://github.com/screepers/screeps-typescript-starter)

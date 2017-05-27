@@ -2,14 +2,13 @@ import { LogLevels } from '../lib/logger/logLevels'
 
 /* --- AInts Specific Config --- */
 
-// Searching
-export const MAX_SEARCH_STEPS: number = 50
+export const ENABLE_PHEROMONE_VISUALS: boolean = true
 
-// Pheromones
-export const MAX_TILE_PHEROMONE_LEVEL: number = 255
-export const MIN_PHEROMONE_DEPOSIT_LEVEL: number = 15
-export const PHEROMONE_DEPOSIT_RATE: number =
-  Math.floor((MAX_TILE_PHEROMONE_LEVEL - MIN_PHEROMONE_DEPOSIT_LEVEL) / MAX_SEARCH_STEPS)
+export const PHEROMONE_MAX_TILE_AMOUNT: number = 255
+export const PHEROMONE_DECAY_TIME: number = 6
+export const PHEROMONE_MIN_DEPOSIT_AMOUNT: number = Math.ceil((CARRY_CAPACITY / HARVEST_POWER) / PHEROMONE_DECAY_TIME)
+
+export const SEARCH_MAX_STEPS: number = PHEROMONE_MAX_TILE_AMOUNT / PHEROMONE_MIN_DEPOSIT_AMOUNT
 
 /* --- Default Config --- */
 
@@ -23,12 +22,6 @@ export const ENABLE_DEBUG_MODE: boolean = true
  * Enable this to enable screeps profiler
  */
 export const USE_PROFILER: boolean = true
-
-/**
- * Minimum number of ticksToLive for a Creep before they go to renew.
- * @type {number}
- */
-export const DEFAULT_MIN_LIFE_BEFORE_NEEDS_REFILL: number = 700
 
 /**
  * Debug level for log output

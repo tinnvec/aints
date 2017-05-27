@@ -1,17 +1,26 @@
 {
-  "name": "screeps-starter",
-  "version": "2.0.0",
+  "name": "aints",
+  "version": "0.0.1",
   "description": "",
   "main": "./dist/main.js",
-  "repository": "screepers/screeps-typescript-starter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tinnvec/aints.git"
+  },
   "scripts": {
     "postinstall": "typings install",
     "deploy": "webpack --colors --env.ENV=dev",
     "start": "webpack --colors --watch",
+    "local": "webpack --colors --env.ENV=local",
+    "watch-local": "webpack --colors --watch --env.ENV=local",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typings": "typings"
   },
-  "author": "",
+  "author": {
+    "name": "Alex Hanna",
+    "email": "tinnvec@gmail.com",
+    "url": "http://tinnvec.github.io/"
+  },
   "license": "MIT",
   "devDependencies": {
     "@types/chai": "^3.5.2",
