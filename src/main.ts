@@ -38,8 +38,10 @@ function mloop() {
   // Save Room memory
   _.invoke(Game.rooms, 'store')
 
-  // Draw Rooms
-  _.invoke(Game.rooms, 'draw')
+  if (Config.ENABLE_PHEROMONE_VISUALS) {
+    // Draw Rooms
+    _.invoke(Game.rooms, 'draw')
+  }
 }
 
 /**

@@ -36,11 +36,9 @@ Room.prototype.store = function(this: Room) {
 }
 
 Room.prototype.draw = function(this: Room) {
-  if (Config.ENABLE_PHEROMONE_VISUALS) {
-    this.pheromoneNetwork.draw('home', '#386CA7')
-    this.pheromoneNetwork.draw('controller', '#F4331F')
-    this.pheromoneNetwork.draw('energy', '#FFE87B')
-  }
+  this.pheromoneNetwork.draw('home', '#386CA7')
+  this.pheromoneNetwork.draw('controller', '#F4331F')
+  this.pheromoneNetwork.draw('energy', '#FFE87B')
 }
 
 Room.prototype.getLookTile = function(this: Room, x: number, y: number) {
