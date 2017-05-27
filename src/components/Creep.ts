@@ -355,10 +355,23 @@ Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
 }
 
 Creep.prototype.searchMove = function(this: Creep): boolean {
-  const dir = this.getSearchPheromoneDirection()
-  if (this.move(dir) === OK) {
-    this.lastDirection = dir
+  const mdir = this.getSearchPheromoneDirection()
+  if (this.move(mdir) === OK) {
+    this.lastDirection = mdir
     this.stepsFromLastSite++
+    // exit check
+    const tile = _.find(this.nearbyTiles, ({ dir }) => dir === mdir).tile
+    if (
+      this.currentDepositPheromone !== undefined &&
+      (tile.x === 0 || tile.y === 0 || tile.x === 49 || tile.y === 49)
+    ) {
+      const currentDepositLevel = this.room.pheromoneNetwork.getTileLevel(this.currentDepositPheromone, tile.x, tile.y)
+      const depositAmount = Config.PHEROMONE_MAX_TILE_AMOUNT -
+        (this.stepsFromLastSite * Config.PHEROMONE_MIN_DEPOSIT_AMOUNT)
+      if (depositAmount > currentDepositLevel) {
+        this.room.pheromoneNetwork.setTileLevel(this.currentDepositPheromone, tile.x, tile.y, depositAmount)
+      }
+    }
     return true
   }
   this.lastDirection = undefined
