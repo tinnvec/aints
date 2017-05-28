@@ -1,6 +1,7 @@
 import * as Profiler from 'screeps-profiler'
 import * as Config from './config/config'
 import { log } from './lib/logger/log'
+import Stats from './lib/stats/Stats'
 
 import './components/Creep'
 import './components/Room'
@@ -15,14 +16,8 @@ if (Config.USE_PROFILER) { Profiler.enable() }
 
 log.info(`loading revision: ${ __REVISION__ }`)
 
-let startCpu: number
 function mloop() {
-  if (Memory.totalCpu === undefined || Memory.totalTickCount === undefined) {
-    // Simple CPU tracking
-    Memory.totalCpu = 0
-    Memory.totalTickCount = 0
-  }
-  startCpu = Game.cpu.getUsed()
+  Stats.init()
 
   for (const name in Memory.structures) {
     if (!Game.structures[name]) {
@@ -46,14 +41,14 @@ function mloop() {
   // Save Room memory
   _.invoke(Game.rooms, 'store')
 
+  Stats.collect()
+
   if (Config.ENABLE_PHEROMONE_VISUALS) {
     // Draw Rooms
     _.invoke(Game.rooms, 'draw')
   }
 
-  Memory.totalCpu += Game.cpu.getUsed() - startCpu
-  Memory.totalTickCount++
-  log.info(`Avg over ${Memory.totalTickCount} ticks: ${_.round(Memory.totalCpu / Memory.totalTickCount, 2)} CPU`)
+  Stats.collectFinalCPU()
 }
 
 /**
