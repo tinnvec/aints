@@ -290,6 +290,7 @@ Creep.prototype.run = function(this: Creep) {
     const spawnFull = (this.carry.energy || 0) + this.nearbySpawn.energy > this.nearbySpawn.energyCapacity
     this.currentSearchPheromone = spawnFull ? 'controller' : 'energy'
     this.currentDepositPheromone = 'home'
+    this.lastDirection = undefined
     this.isSearching = true
   }
 
