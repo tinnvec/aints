@@ -43,6 +43,11 @@ Screeps AI using ants and other social colony insects as a model.
 - [Composite collective decision-making](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4590433/)
 - http://www.huffingtonpost.com/marc-bekoff/study-rats-empathy_b_1138675.html
 - [Structure and formation of ant transportation networks](http://rsif.royalsocietypublishing.org/content/8/62/1298)
+- [The Regulation of Ant Colony Foraging Activity without Spatial Information](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002670)
+- [Ant colony optimization: Introduction and recent trends](https://www.ics.uci.edu/~welling/teaching/271fall09/antcolonyopt.pdf)
+- [From Real to Artificial Ants](https://mitpress.mit.edu/sites/default/files/titles/content/9780262042192_sch_0001.pdf)
+- [Ant Foraging Revisited](http://ai2-s2-pdfs.s3.amazonaws.com/0d92/349d41b77042a27e64526239198b2e117925.pdf)
+- [Ant Algorithms for Discrete Optimization](https://www.cs.ubc.ca/~hutter/EARG.shtml/earg/papers04-05/artificial_life.pdf)
 
 ---
 
