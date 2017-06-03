@@ -18,12 +18,15 @@ export class CreepProcess extends Process {
   }
 
   private creep: Creep
+  private directionPriorities: number[]
   private nearbyLookTiles: Array<{ dir: number, tile: LookTile }>
 
   public run() {
     this.creep = Game.creeps[this.memory.creepName]
     if (this.creep === undefined) { return Kernel.killProcess(this.pid) }
     if (this.creep.spawning) { return }
+
+    this.directionPriorities = this.getDirectionPriorities(this.memory.lastDirection)
     this.nearbyLookTiles = this.getNearbyLookTiles()
 
   private getDirectionPriorities(lastDirection: number): number[] {
