@@ -25,6 +25,14 @@ export class LookTile extends RoomPosition {
     }
   }
 
+  public getPheromoneLevels(searchPheromoneType: string): { searchLevel: number, otherLevel: number } {
+    const result = { searchLevel: this.pheromones[searchPheromoneType] || 0, otherLevel: 0 }
+    for (const pheromoneType in this.pheromones) {
+      if (pheromoneType !== searchPheromoneType) { result.otherLevel += this.pheromones[pheromoneType] || 0 }
+    }
+    return result
+  }
+
   public isWalkable(ignoreCreeps?: boolean) {
     if (_.includes(this.terrain, 'wall')) { return false }
     if (!ignoreCreeps && this.creeps.length > 0) { return false }

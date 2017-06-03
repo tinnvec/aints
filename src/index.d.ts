@@ -13,6 +13,7 @@ interface LookTile extends RoomPosition {
   readonly structures: { [structureType: string]: Structure[] }
   readonly terrain: string[]
 
+  getPheromoneLevels(searchPheromoneType: string): { searchLevel: number, otherLevel: number }
   isWalkable(ignoreCreeps?: boolean): boolean
 }
 
