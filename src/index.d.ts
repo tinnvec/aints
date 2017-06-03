@@ -1,5 +1,10 @@
 declare const __REVISION__: string;
 
+type RoomVisualOptions = {
+  color?: string
+  opacity?: number
+}
+
 interface Creep {
   nearbyLookTiles: Array<{ dir: number, tile: LookTile }>
 }
@@ -27,4 +32,11 @@ interface Room {
   readonly lookTiles: LookTile[]
   // draw(): void
   getLookTile(x: number, y: number): LookTile | undefined
+}
+
+interface RoomVisual {
+  connectRoads(opts?: RoomVisualOptions): void
+  speech(text: string, x: number, y: number): void
+  structure(x: number, y: number, type: string, opts?: RoomVisualOptions): void
+  test(): void
 }
