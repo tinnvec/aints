@@ -1,17 +1,6 @@
-import Profile from '../lib/screeps-profiler/Profile'
+import { PheromoneNetwork } from './PheromoneNetwork'
 
-interface LookTile extends RoomPosition {
-  readonly constructionSites: { [structureType: string]: ConstructionSite[] }
-  readonly creeps: Creep[]
-  readonly pheromones: { [type: string]: number }
-  readonly sources: Source[]
-  readonly structures: { [structureType: string]: Structure[] }
-  readonly terrain: string[]
-  isWalkable(ignoreCreeps?: boolean): boolean
-}
-
-@Profile
-export default class LookTile extends RoomPosition {
+export class LookTile extends RoomPosition {
   public readonly constructionSites: { [structureType: string]: ConstructionSite[] }
   public readonly creeps: Creep[]
   public readonly pheromones: { [type: string]: number }
@@ -19,12 +8,8 @@ export default class LookTile extends RoomPosition {
   public readonly structures: { [structureType: string]: Structure[] }
   public readonly terrain: string[]
 
-  private room: Room
-
   constructor(x: number, y: number, roomName: string) {
     super(x, y, roomName)
-
-    this.room = Game.rooms[roomName]
 
     this.creeps = this.lookFor<Creep>(LOOK_CREEPS)
     this.sources = this.lookFor<Source>(LOOK_SOURCES)
@@ -35,8 +20,8 @@ export default class LookTile extends RoomPosition {
     this.structures = _.groupBy(this.lookFor<Structure>(LOOK_STRUCTURES), ({ structureType }) => structureType)
 
     this.pheromones = {}
-    for (const type in this.room.pheromoneNetwork.layers) {
-      this.pheromones[type] = this.room.pheromoneNetwork.getTileLevel(type, this.x, this.y)
+    for (const pheromoneType in PheromoneNetwork.layers) {
+      this.pheromones[pheromoneType] = PheromoneNetwork.getTypeLevelAt(pheromoneType, this.x, this.y, this.roomName)
     }
   }
 
