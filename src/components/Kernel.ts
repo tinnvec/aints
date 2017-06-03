@@ -1,4 +1,5 @@
 import { InitProcess } from '../processes/Init'
+import { PheromoneNetwork } from './PheromoneNetwork'
 import { Process, ProcessStatus } from './Process'
 import { ProcessRegistry } from './ProcessRegistry'
 
@@ -43,6 +44,7 @@ export class Kernel {
   }
 
   public static load() {
+    this.loadPheromoneNetwork()
     this.loadProcessTable()
     this.garbageCollection()
     if (this.getProcessByPID(0) === undefined) { InitProcess.start() }
@@ -62,6 +64,7 @@ export class Kernel {
   }
 
   public static save() {
+    this.storePheromoneNetwork()
     this.storeProcessTable()
   }
 
@@ -69,6 +72,17 @@ export class Kernel {
 
   private static garbageCollection() {
     Memory.processMemory = _.pick(Memory.processMemory, (_: any, k: string) => this.processTable[k] !== undefined)
+  }
+
+  private static loadPheromoneNetwork() {
+    Memory.pheromoneNetwork = Memory.pheromoneNetwork || {}
+    Memory.pheromoneNetwork.layers = Memory.pheromoneNetwork.layers || {}
+    for (const layerName in Memory.pheromoneNetwork.layers) {
+      for (const roomName in Memory.pheromoneNetwork.layers[layerName]) {
+        PheromoneNetwork.layers[layerName][roomName] =
+          PathFinder.CostMatrix.deserialize(Memory.pheromoneNetwork.layers[layerName][roomName])
+      }
+    }
   }
 
   private static loadProcessTable() {
@@ -83,6 +97,14 @@ export class Kernel {
       process.setMemory(memory)
       this.processTable[pid] = process
       this.queue.push(process)
+    }
+  }
+
+  private static storePheromoneNetwork() {
+    for (const layerName in PheromoneNetwork.layers) {
+      for (const roomName in PheromoneNetwork.layers[layerName]) {
+        Memory.pheromoneNetwork.layers[layerName][roomName] = PheromoneNetwork.layers[layerName][roomName].serialize()
+      }
     }
   }
 
