@@ -1,8 +1,10 @@
 import { Kernel } from '../components/Kernel'
 import { Process, ProcessPriority } from '../components/Process'
 import { registerProcess } from '../decorators/registerProcess'
+
 import { CreepProcess } from './Creep'
 import { PheromoneNetworkProcess } from './PheromoneNetwork'
+import { RoomProcess } from './Room'
 import { SpawnProcess } from './Spawn'
 
 @registerProcess
@@ -30,6 +32,12 @@ export class InitProcess extends Process {
     for (const creepName in Game.creeps) {
       const pid = this.memory.pidList.creeps[creepName]
       if (pid === undefined) { this.memory.pidList.creeps[creepName] = CreepProcess.start(creepName) }
+    }
+
+    this.memory.pidList.rooms = this.memory.pidList.rooms || {}
+    for (const roomName in Game.rooms) {
+      const pid = this.memory.pidList.rooms[roomName]
+      if (pid === undefined) { this.memory.pidList.rooms[roomName] = RoomProcess.start(roomName) }
     }
   }
 }
