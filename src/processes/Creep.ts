@@ -17,6 +17,8 @@ export class CreepProcess extends Process {
     proc.memory.lastDirection = 0
     proc.memory.isSearching = true
     proc.memory.searchPheromone = 'energy'
+    proc.memory.homeDirections = []
+    proc.memory.stepsFromLastSite = 0
     return proc.pid
   }
 
@@ -31,6 +33,9 @@ export class CreepProcess extends Process {
 
     this.directionPriorities = this.getDirectionPriorities(this.memory.lastDirection)
     this.nearbyLookTiles = this.getNearbyLookTiles()
+
+    this.searchMove()
+  }
 
   private getDirectionPriorities(lastDirection: number): number[] {
     // Directions
@@ -79,5 +84,19 @@ export class CreepProcess extends Process {
         const { searchLevel, otherLevel } = tile.getPheromoneLevels(this.memory.searchPheromone)
         return (searchLevel * 2) - otherLevel
       }).dir
+  }
+
+  private searchMove() {
+    const mdir = this.getSearchDirection()
+    if (this.creep.move(mdir) === OK) {
+      let dRev = mdir + 4
+      if (dRev > 8) { dRev -= 8 }
+
+      this.memory.homeDirections.push(dRev)
+      this.memory.lastDirection = mdir
+      this.memory.stepsFromLastSite++
+    } else {
+      this.memory.lastDirection = 0
+    }
   }
 }
