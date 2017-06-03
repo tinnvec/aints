@@ -43,7 +43,7 @@ export class CreepProcess extends Process {
     // 7 * 3
     // 6 5 4
     if (lastDirection === 0) { return _.shuffle([1, 2, 3, 4, 5, 6, 7, 8]) }
-    const result: number[] = [lastDirection]
+    const result: number[] = []
     let i: number
     let dl: number
     let dr: number
@@ -52,7 +52,9 @@ export class CreepProcess extends Process {
       if (dl < 1) { dl += 8 }
       dr = lastDirection + i
       if (dr > 8) { dr -= 8 }
-      result.push(..._.shuffle([dl, dr]))
+      const dirs = [dl, dr]
+      if (i === 1) { dirs.push(lastDirection) }
+      result.push(..._.shuffle(dirs))
     }
     let dRev = lastDirection + 4
     if (dRev > 8) { dRev -= 8 }
