@@ -68,4 +68,16 @@ export class CreepProcess extends Process {
     }
     return result
   }
+
+  private getSearchDirection(): number {
+    return _(this.nearbyLookTiles)
+      .filter(({ dir, tile }) =>
+        this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(!this.memory.isSearching)
+      ).sort((a, b) =>
+        this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir)
+      ).max(({ tile }) => {
+        const { searchLevel, otherLevel } = tile.getPheromoneLevels(this.memory.searchPheromone)
+        return (searchLevel * 2) - otherLevel
+      }).dir
+  }
 }
