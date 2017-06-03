@@ -2,6 +2,7 @@ import { Kernel } from '../components/Kernel'
 import { Process, ProcessPriority } from '../components/Process'
 import { registerProcess } from '../decorators/registerProcess'
 import { CreepProcess } from './Creep'
+import { PheromoneNetworkProcess } from './PheromoneNetwork'
 import { SpawnProcess } from './Spawn'
 
 @registerProcess
@@ -14,6 +15,10 @@ export class InitProcess extends Process {
 
   public run() {
     this.memory.pidList = this.memory.pidList || {}
+
+    if (this.memory.pidList.pheromoneNetwork === undefined) {
+      this.memory.pidList.pheromoneNetwork = PheromoneNetworkProcess.start()
+    }
 
     this.memory.pidList.spawns = this.memory.pidList.spawns || {}
     for (const spawnName in Game.spawns) {
