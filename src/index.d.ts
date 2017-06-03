@@ -1,5 +1,9 @@
 declare const __REVISION__: string;
 
+interface Creep {
+  nearbyLookTiles: Array<{ dir: number, tile: LookTile }>
+}
+
 interface LookTile extends RoomPosition {
   readonly constructionSites: { [structureType: string]: ConstructionSite[] }
   readonly creeps: Creep[]
