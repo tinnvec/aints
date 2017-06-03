@@ -19,6 +19,7 @@ export class PheromoneNetwork {
   }
 
   public static getTypeLevelAt(pheromoneType: string, x: number, y: number, roomName: string) {
+    this.layers[pheromoneType][roomName] = this.layers[pheromoneType][roomName] || new PathFinder.CostMatrix()
     return this.layers[pheromoneType][roomName].get(x, y)
   }
 
