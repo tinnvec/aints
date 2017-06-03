@@ -24,6 +24,10 @@ interface Memory {
   processTable: any
 }
 
+interface CostMatrix {
+  draw(roomName: string, color?: string): void
+}
+
 interface Room {
   _lookTiles?: LookTile[]
 
