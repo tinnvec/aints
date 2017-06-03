@@ -54,3 +54,5 @@ Screeps AI using ants and other social colony insects as a model.
 ## Thanks
 
 Forked with love from [screeps-typescript-starter](https://github.com/screepers/screeps-typescript-starter)
+
+OS-style designed after [NhanHo/ScreepsOS](https://github.com/NhanHo/ScreepsOS)

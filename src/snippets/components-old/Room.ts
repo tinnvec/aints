@@ -2,6 +2,17 @@ import * as Config from '../config/config'
 import LookTile from './LookTile'
 import PheromoneNetwork from './PheromoneNetwork'
 
+interface Room {
+  _lookTiles?: LookTile[]
+  _pheromoneNetwork?: PheromoneNetwork
+  readonly lookTiles: LookTile[]
+  readonly pheromoneNetwork: PheromoneNetwork
+  run(): void
+  store(): void
+  draw(): void
+  getLookTile(x: number, y: number): LookTile | undefined
+}
+
 // --- Properties ---
 
 Object.defineProperty(Room.prototype, 'lookTiles', {
