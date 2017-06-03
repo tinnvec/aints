@@ -1,8 +1,4 @@
-interface Memory {
-  log: any
   structures: { [id: string]: any }
-}
-
 declare const __REVISION__: string;
 
 // --- Interfaces ---
@@ -73,6 +69,11 @@ interface Room {
   store(): void
   draw(): void
   getLookTile(x: number, y: number): LookTile | undefined
+interface Memory {
+  log: any
+  pidCounter: number
+  processMemory: any
+  processTable: any
 }
 
 interface Structure {
