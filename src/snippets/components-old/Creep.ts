@@ -1,5 +1,42 @@
 import * as Config from '../config/config'
 
+interface Creep {
+  _currentDepositPheromone?: string
+  _currentSearchPheromone?: string
+  _directionPriorities?: number[]
+  _isCaryingEnergy?: boolean
+  _isHarvesting?: boolean
+  _isSearching?: boolean
+  _isUpgrading?: boolean
+  _lastDirection?: number
+  _lastMoveWasSuccessful?: boolean
+  _lastPheromoneDepositAmount?: number
+  _nearbyController?: Controller
+  _nearbySource?: Source
+  _nearbySpawn?: Spawn
+  _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
+  _stepsFromLastSite?: number
+  readonly directionPriorities: number[]
+  readonly isCarryingEnergy: boolean
+  readonly isHarvesting: boolean
+  readonly isUpgrading: boolean
+  readonly nearbyController?: Controller
+  readonly nearbySource?: Source
+  readonly nearbySpawn?: Spawn
+  readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
+  currentDepositPheromone?: string
+  currentSearchPheromone: string
+  isSearching: boolean
+  lastDirection?: number
+  lastMoveWasSuccessful: boolean
+  lastPheromoneDepositAmount: number
+  stepsFromLastSite: number
+  run(): void
+  depositPheromone(): number
+  getSearchPheromoneDirection(): number
+  searchMove(): boolean
+}
+
 // --- Properties ---
 
 Object.defineProperty(Creep.prototype, 'isCarryingEnergy', {

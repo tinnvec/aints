@@ -1,3 +1,9 @@
+interface Structure {
+  memory: any
+  run(): void
+}
+
+
 // --- Properties ---
 
 Object.defineProperty(Structure.prototype, 'memory', {

@@ -1,6 +1,16 @@
 import * as Config from '../config/config'
 import Profile from '../lib/screeps-profiler/Profile'
 
+// interface PheromoneNetwork {
+//   readonly layers: { [type: string]: CostMatrix }
+//   decay(): void
+//   diffuse(): void
+//   draw(type: string, color?: string): void
+//   getTileLevel(type: string, x: number, y: number): number
+//   setTileLevel(type: string, x: number, y: number, amount: number): void
+//   serialize(): { layers: { [type: string]: number[] }, roomName: string }
+// }
+
 @Profile
 export default class PheromoneNetwork {
   public static deserialize(memObj: { layers: { [type: string]: number[] }, roomName: string }): PheromoneNetwork {
