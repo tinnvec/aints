@@ -14,6 +14,9 @@ export class CreepProcess extends Process {
     const proc = new CreepProcess(0)
     Kernel.addProcess(proc)
     proc.memory.creepName = creepName
+    proc.memory.lastDirection = 0
+    proc.memory.isSearching = true
+    proc.memory.searchPheromone = 'energy'
     return proc.pid
   }
 
