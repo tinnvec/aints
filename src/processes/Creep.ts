@@ -17,6 +17,8 @@ export class CreepProcess extends Process {
     return proc.pid
   }
 
+  private nearbyLookTiles: Array<{ dir: number, tile: LookTile }>
+
   public run() {
     const creep = Game.creeps[this.memory.creepName]
     if (creep === undefined) { return Kernel.killProcess(this.pid) }
