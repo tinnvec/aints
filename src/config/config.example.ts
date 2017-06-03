@@ -2,6 +2,8 @@ import { LogLevels } from '../lib/logger/logLevels'
 
 /* --- AInts Specific Config --- */
 
+export const ENABLE_ROOM_VISUALS: boolean = true
+
 export const PHEROMONE_MAX_TILE_AMOUNT: number = 255
 export const PHEROMONE_DECAY_TIME: number = 9
 
