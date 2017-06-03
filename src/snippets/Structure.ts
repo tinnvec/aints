@@ -1,6 +1,5 @@
 interface Structure {
   memory: any
-  run(): void
 }
 
 
@@ -20,7 +19,3 @@ Object.defineProperty(Structure.prototype, 'memory', {
     Memory.structures[this.id] = value
   }
 })
-
-// --- Methods ---
-
-Structure.prototype.run = function(this: Structure) { return }
