@@ -89,6 +89,11 @@ export class CreepProcess extends Process {
   }
 
   private searchMove() {
+    if (this.creep.fatigue > 0) {
+      this.memory.stepsFromLastSite++
+      return
+    }
+
     const mdir = this.getSearchDirection()
     if (this.creep.move(mdir) === OK) {
       let dRev = mdir + 4
