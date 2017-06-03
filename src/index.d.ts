@@ -17,3 +17,10 @@ interface Memory {
   processMemory: any
   processTable: any
 }
+
+interface Room {
+  _lookTiles?: LookTile[]
+  readonly lookTiles: LookTile[]
+  // draw(): void
+  getLookTile(x: number, y: number): LookTile | undefined
+}
