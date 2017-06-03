@@ -1,5 +1,6 @@
 import { Kernel } from '../components/Kernel'
 import { Process } from '../components/Process'
+import * as Config from '../config/config'
 import { registerProcess } from '../decorators/registerProcess'
 
 const DIRECTION_COORDINATE_DELTAS: { [dir: number]: [number, number] } = {
@@ -25,6 +26,7 @@ export class CreepProcess extends Process {
   private creep: Creep
   private directionPriorities: number[]
   private nearbyLookTiles: Array<{ dir: number, tile: LookTile }>
+  private nearbySpawn?: Spawn
 
   public run() {
     this.creep = Game.creeps[this.memory.creepName]
@@ -33,8 +35,19 @@ export class CreepProcess extends Process {
 
     this.directionPriorities = this.getDirectionPriorities(this.memory.lastDirection)
     this.nearbyLookTiles = this.getNearbyLookTiles()
+    this.nearbySpawn = this.getNearbySpawn()
 
-    this.searchMove()
+    if (this.nearbySpawn !== undefined) {
+      this.memory.isSearching = true
+      this.memory.homeDirections = []
+      this.memory.stepsFromLastSite = 0
+    }
+
+    if (this.memory.isSearching && this.memory.stepsFromLastSite >= Config.SEARCH_MAX_STEPS) {
+      this.memory.isSearching = false
+    }
+
+    this.move()
   }
 
   private getDirectionPriorities(lastDirection: number): number[] {
@@ -76,6 +89,13 @@ export class CreepProcess extends Process {
     return result
   }
 
+  private getNearbySpawn(): Spawn | undefined {
+    let spawn: Spawn | undefined
+    const spawnTile = _.find(this.nearbyLookTiles, ({ tile }) => (tile.structures.spawn || []).length > 0)
+    if (spawnTile !== undefined) { spawn = _.first(spawnTile.tile.structures.spawn) as Spawn }
+    return spawn
+  }
+
   private getSearchDirection(): number {
     return _(this.nearbyLookTiles)
       .filter(({ dir, tile }) =>
@@ -88,22 +108,27 @@ export class CreepProcess extends Process {
       }).dir
   }
 
-  private searchMove() {
+  private move() {
     if (this.creep.fatigue > 0) {
       this.memory.stepsFromLastSite++
       return
     }
 
-    const mdir = this.getSearchDirection()
-    if (this.creep.move(mdir) === OK) {
-      let dRev = mdir + 4
-      if (dRev > 8) { dRev -= 8 }
+    if (this.memory.isSearching) {
+      const mdir = this.getSearchDirection()
+      if (this.creep.move(mdir) === OK) {
+        let dRev = mdir + 4
+        if (dRev > 8) { dRev -= 8 }
 
-      this.memory.homeDirections.push(dRev)
-      this.memory.lastDirection = mdir
-      this.memory.stepsFromLastSite++
+        this.memory.homeDirections.push(dRev)
+        this.memory.lastDirection = mdir
+        this.memory.stepsFromLastSite++
+      } else {
+        this.memory.lastDirection = 0
+      }
     } else {
-      this.memory.lastDirection = 0
+      const hdir = this.memory.homeDirections.pop()
+      this.creep.move(hdir)
     }
   }
 }
