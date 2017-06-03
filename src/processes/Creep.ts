@@ -17,12 +17,13 @@ export class CreepProcess extends Process {
     return proc.pid
   }
 
+  private creep: Creep
   private nearbyLookTiles: Array<{ dir: number, tile: LookTile }>
 
   public run() {
-    const creep = Game.creeps[this.memory.creepName]
-    if (creep === undefined) { return Kernel.killProcess(this.pid) }
-    if (creep.spawning) { return }
+    this.creep = Game.creeps[this.memory.creepName]
+    if (this.creep === undefined) { return Kernel.killProcess(this.pid) }
+    if (this.creep.spawning) { return }
     this.nearbyLookTiles = this.getNearbyLookTiles()
 
   private getDirectionPriorities(lastDirection: number): number[] {
