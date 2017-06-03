@@ -2,6 +2,12 @@ import { Kernel } from '../components/Kernel'
 import { Process } from '../components/Process'
 import { registerProcess } from '../decorators/registerProcess'
 
+const DIRECTION_COORDINATE_DELTAS: { [dir: number]: [number, number] } = {
+  8: [-1, -1],  1: [0, -1],  2: [1, -1],
+  7: [-1, 0],   /*Center*/   3: [1, 0],
+  6: [-1, 1],   5: [0, 1],   4: [1, 1]
+}
+
 @registerProcess
 export class CreepProcess extends Process {
   public static start(creepName: string) {
@@ -36,5 +42,21 @@ export class CreepProcess extends Process {
     if (dRev > 8) { dRev = dRev - 8 }
     result.push(dRev)
     return result
+  }
+
+  private getNearbyLookTiles(creep: Creep): Array<{ dir: number, tile: LookTile }> {
+    if (creep.nearbyLookTiles === undefined) {
+      const {x, y} = creep.pos
+      creep.nearbyLookTiles = []
+      for (const dir in DIRECTION_COORDINATE_DELTAS) {
+        const [dx, dy] = DIRECTION_COORDINATE_DELTAS[dir]
+        const nx = x + dx
+        const ny = y + dy
+        const tile = creep.room.getLookTile(nx, ny)
+        if (tile === undefined) { continue }
+        creep.nearbyLookTiles.push({ dir: parseInt(dir, 10), tile })
+      }
+    }
+    return creep.nearbyLookTiles
   }
 }
