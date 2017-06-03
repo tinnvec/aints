@@ -1,6 +1,8 @@
 import { Kernel } from './components/Kernel'
 import { log } from './lib/logger/log'
 
+import './prototypes/Room'
+
 log.info(`loading revision: ${ __REVISION__ }`)
 
 export function loop() {
