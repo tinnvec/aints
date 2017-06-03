@@ -102,6 +102,7 @@ export class Kernel {
 
   private static storePheromoneNetwork() {
     for (const layerName in PheromoneNetwork.layers) {
+      Memory.pheromoneNetwork.layers[layerName] = Memory.pheromoneNetwork.layers[layerName] || {}
       for (const roomName in PheromoneNetwork.layers[layerName]) {
         Memory.pheromoneNetwork.layers[layerName][roomName] = PheromoneNetwork.layers[layerName][roomName].serialize()
       }
