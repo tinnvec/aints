@@ -1,7 +1,6 @@
 import { Kernel } from './components/Kernel'
 import { log } from './lib/logger/log'
 
-import './prototypes/Pathfinder.CostMatrix'
 import './prototypes/Room'
 
 log.info(`loading revision: ${ __REVISION__ }`)
