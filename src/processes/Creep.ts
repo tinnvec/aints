@@ -27,6 +27,7 @@ export class CreepProcess extends Process {
   private directionPriorities: number[]
   private nearbyLookTiles: Array<{ dir: number, tile: LookTile }>
   private nearbySpawn?: Spawn
+  private nearbySource?: Source
 
   public run() {
     this.creep = Game.creeps[this.memory.creepName]
@@ -36,6 +37,7 @@ export class CreepProcess extends Process {
     this.directionPriorities = this.getDirectionPriorities(this.memory.lastDirection)
     this.nearbyLookTiles = this.getNearbyLookTiles()
     this.nearbySpawn = this.getNearbySpawn()
+    this.nearbySource = this.getNearbySource()
 
     if (this.nearbySpawn !== undefined) {
       this.memory.isSearching = true
@@ -94,6 +96,16 @@ export class CreepProcess extends Process {
     const spawnTile = _.find(this.nearbyLookTiles, ({ tile }) => (tile.structures.spawn || []).length > 0)
     if (spawnTile !== undefined) { spawn = _.first(spawnTile.tile.structures.spawn) as Spawn }
     return spawn
+  }
+
+  private getNearbySource(): Source | undefined {
+    let source: Source | undefined
+    const sourceTile = _.find(
+      this.nearbyLookTiles,
+      ({ tile }) => (tile.sources || []).length > 0 && _.every(tile.sources, (s) => s.energy > 0)
+    )
+    if (sourceTile !== undefined) { source = _.first(sourceTile.tile.sources) }
+    return source
   }
 
   private getSearchDirection(): number {
