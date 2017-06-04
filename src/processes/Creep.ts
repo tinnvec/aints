@@ -1,4 +1,5 @@
 import { Kernel } from '../components/Kernel'
+import { PheromoneNetwork } from '../components/PheromoneNetwork'
 import { Process } from '../components/Process'
 import * as Config from '../config/config'
 import { registerProcess } from '../decorators/registerProcess'
@@ -32,17 +33,48 @@ export class CreepProcess extends Process {
     if (this.creep === undefined) { return Kernel.killProcess(this.pid) }
     if (this.creep.spawning) { return }
 
+    if (this.lastMoveWasSuccessful || this.creep.fatigue > 0) { this.stepsFromLastSite++ }
 
-    if (this.nearbySpawn !== undefined) {
-      this.memory.isSearching = true
-      this.memory.homeDirections = []
-      this.memory.stepsFromLastSite = 0
+    if (this.lastMoveWasSuccessful) {
+      if (this.isSearching) {
+        let dRev = this.lastDirection + 4
+        if (dRev > 8) { dRev -= 8 }
+        this.homeDirections.push(dRev)
+      }
+    } else if (this.lastFatigue < 1) {
+      if (this.isSearching) {
+        this.lastDirection = 0
+      } else if (!this.isHarvesting) {
+        this.homeDirections.push(this.lastDirection)
+      }
     }
 
-    if (this.memory.isSearching && this.memory.stepsFromLastSite >= Config.SEARCH_MAX_STEPS) {
-      this.memory.isSearching = false
+    if (this.nearbySpawn !== null) {
+      if (this.creep.carry.energy || 0 > 0) {
+        this.creep.transfer(this.nearbySpawn, RESOURCE_ENERGY)
+        this.lastDirection = 0
+      } else {
+        this.depositPheromone = undefined
+        this.homeDirections = []
+        this.isSearching = true
+        this.stepsFromLastSite = 0
+      }
     }
 
+    if (this.nearbySource !== null) {
+      this.depositPheromone = 'energy'
+      this.isHarvesting = _.sum(this.creep.carry) < this.creep.carryCapacity
+      this.isSearching = false
+      this.stepsFromLastSite = 0
+      if (this.isHarvesting) { this.creep.harvest(this.nearbySource) }
+    }
+
+    if (this.isSearching && this.stepsFromLastSite >= Config.SEARCH_MAX_STEPS) {
+      this.depositPheromone = undefined
+      this.isSearching = false
+    }
+
+    this.updatePheromoneLevel()
     this.move()
   }
 
@@ -177,36 +209,43 @@ export class CreepProcess extends Process {
   private getSearchDirection(): number {
     return _(this.nearbyLookTiles)
       .filter(({ dir, tile }) =>
-        this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(!this.memory.isSearching)
+        this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(Math.random() < 0.33)
       ).sort((a, b) =>
         this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir)
-      ).max(({ tile }) => {
-        const { searchLevel, otherLevel } = tile.getPheromoneLevels(this.memory.searchPheromone)
-        return (searchLevel * 2) - otherLevel
-      }).dir
+      ).max(({ tile }) =>
+        tile.getPheromoneLevels(this.searchPheromone).searchLevel
+      ).dir
   }
 
   private move() {
-    if (this.creep.fatigue > 0) {
-      this.memory.stepsFromLastSite++
-      return
-    }
-
-    if (this.memory.isSearching) {
-      const mdir = this.getSearchDirection()
-      if (this.creep.move(mdir) === OK) {
-        let dRev = mdir + 4
-        if (dRev > 8) { dRev -= 8 }
-
-        this.memory.homeDirections.push(dRev)
-        this.memory.lastDirection = mdir
-        this.memory.stepsFromLastSite++
-      } else {
-        this.memory.lastDirection = 0
+    this.lastPosition = { x: this.creep.pos.x, y: this.creep.pos.y }
+    this.lastFatigue = this.creep.fatigue
+    if (this.creep.fatigue > 0 || this.isHarvesting) { return }
+    const dir = this.isSearching ? this.getSearchDirection() : this.homeDirections.pop()
+    if (dir === undefined) { return }
+    this.lastDirection = dir
+    // exit pheromones check
+    const lookTile = _.find(this.nearbyLookTiles, (lt) => lt.dir === dir)
+    if (lookTile !== undefined) {
+      const { tile } = lookTile
+      if (this.depositPheromone !== undefined && (tile.x === 0 || tile.y === 0 || tile.x === 49 || tile.y === 49)) {
+        const currentLevel = PheromoneNetwork.getTypeLevelAt(this.depositPheromone, tile.x, tile.y, tile.roomName)
+        const newAmount = Config.PHEROMONE_MAX_TILE_AMOUNT - (this.stepsFromLastSite * 2)
+        if (newAmount > currentLevel) {
+          PheromoneNetwork.setTypeLevelAt(this.depositPheromone, newAmount, tile.x, tile.y, tile.roomName)
+        }
       }
-    } else {
-      const hdir = this.memory.homeDirections.pop()
-      this.creep.move(hdir)
     }
+    this.creep.move(dir)
+  }
+
+  private updatePheromoneLevel() {
+    if (this.depositPheromone === undefined) { return }
+    if (!this.lastMoveWasSuccessful) { return }
+    const { x, y, roomName } = this.creep.pos
+    const currentLevel = PheromoneNetwork.getTypeLevelAt(this.depositPheromone, x, y, roomName)
+    const newAmount = Config.PHEROMONE_MAX_TILE_AMOUNT - (this.stepsFromLastSite * 2)
+    if (newAmount < currentLevel) { return }
+    PheromoneNetwork.setTypeLevelAt(this.depositPheromone, newAmount, x, y, roomName)
   }
 }
