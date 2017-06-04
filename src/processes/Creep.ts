@@ -36,6 +36,7 @@ export class CreepProcess extends Process {
     if (this.lastMoveWasSuccessful || this.creep.fatigue > 0) { this.stepsFromLastSite++ }
 
     if (this.lastMoveWasSuccessful) {
+      this.stuckCounter = 0
       if (this.isSearching) {
         let dRev = this.lastDirection + 4
         if (dRev > 8) { dRev -= 8 }
@@ -45,6 +46,8 @@ export class CreepProcess extends Process {
       if (this.isSearching) {
         this.lastDirection = 0
       } else if (!this.isHarvesting) {
+        this.stuckCounter++
+        if (this.stuckCounter > 5) { return this.creep.suicide() }
         this.homeDirections.push(this.lastDirection)
       }
     }
