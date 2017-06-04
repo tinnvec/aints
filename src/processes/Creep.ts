@@ -19,21 +19,19 @@ export class CreepProcess extends Process {
     return proc.pid
   }
 
+  private _directionPriorities?: number[]
+  private _lastMoveWasSuccessful?: boolean
+  private _nearbyLookTiles?: Array<{ dir: number, tile: LookTile }>
+  private _nearbySpawn?: Spawn | null
+  private _nearbySource?: Source | null
+
   private creep: Creep
-  private directionPriorities: number[]
-  private nearbyLookTiles: Array<{ dir: number, tile: LookTile }>
-  private nearbySpawn?: Spawn
-  private nearbySource?: Source
 
   public run() {
     this.creep = Game.creeps[this.memory.creepName]
     if (this.creep === undefined) { return Kernel.killProcess(this.pid) }
     if (this.creep.spawning) { return }
 
-    this.directionPriorities = this.getDirectionPriorities(this.memory.lastDirection)
-    this.nearbyLookTiles = this.getNearbyLookTiles()
-    this.nearbySpawn = this.getNearbySpawn()
-    this.nearbySource = this.getNearbySource()
 
     if (this.nearbySpawn !== undefined) {
       this.memory.isSearching = true
@@ -48,7 +46,6 @@ export class CreepProcess extends Process {
     this.move()
   }
 
-  private getDirectionPriorities(lastDirection: number): number[] {
   private get depositPheromone(): string | undefined {
     return this.memory.depositPheromone
   }
@@ -59,19 +56,30 @@ export class CreepProcess extends Process {
     // 8 1 2
     // 7 * 3
     // 6 5 4
-    if (lastDirection === 0) { return _.shuffle([1, 2, 3, 4, 5, 6, 7, 8]) }
-    const result: number[] = []
-    let i: number
-    let dl: number
-    let dr: number
-    for (i = 1; i < 4; i++) {
-      dl = lastDirection - i
-      if (dl < 1) { dl += 8 }
-      dr = lastDirection + i
-      if (dr > 8) { dr -= 8 }
-      const dirs = [dl, dr]
-      if (i === 1) { dirs.push(lastDirection) }
-      result.push(..._.shuffle(dirs))
+    if (this._directionPriorities === undefined) {
+      this._directionPriorities = []
+      if (this.lastDirection === 0) {
+        this._directionPriorities = _.shuffle([1, 2, 3, 4, 5, 6, 7, 8])
+      } else {
+        let i: number
+        let dl: number
+        let dr: number
+        for (i = 1; i < 4; i++) {
+          dl = this.lastDirection - i
+          if (dl < 1) { dl += 8 }
+          dr = this.lastDirection + i
+          if (dr > 8) { dr -= 8 }
+          const dirs = [dl, dr]
+          if (i === 1) { dirs.push(this.lastDirection) }
+          this._directionPriorities.push(..._.shuffle(dirs))
+        }
+        // let dRev = this.lastDirection + 4
+        // if (dRev > 8) { dRev -= 8 }
+        // this._directionPriorities.push(dRev)
+      }
+    }
+    return this._directionPriorities
+  }
 
   private get homeDirections(): number[] {
     if (this.memory.homeDirections === undefined) { this.memory.homeDirections = [] }
@@ -114,22 +122,6 @@ export class CreepProcess extends Process {
       this._lastMoveWasSuccessful = this.lastFatigue < 1 &&
         (this.creep.pos.x !== this.lastPosition.x || this.creep.pos.y !== this.lastPosition.y)
     }
-    let dRev = lastDirection + 4
-    if (dRev > 8) { dRev -= 8 }
-    result.push(dRev)
-    return result
-  }
-
-  private getNearbyLookTiles(): Array<{ dir: number, tile: LookTile }> {
-    const {x, y} = this.creep.pos
-    const result: Array<{ dir: number, tile: LookTile }> = []
-    for (const dir in DIRECTION_COORDINATE_DELTAS) {
-      const [dx, dy] = DIRECTION_COORDINATE_DELTAS[dir]
-      const nx = x + dx
-      const ny = y + dy
-      const tile = this.creep.room.getLookTile(nx, ny)
-      if (tile === undefined) { continue }
-      result.push({ dir: parseInt(dir, 10), tile })
     return this._lastMoveWasSuccessful
   }
 
@@ -144,25 +136,42 @@ export class CreepProcess extends Process {
     return this.memory.stepsFromLastSite
   }
   private set stepsFromLastSite(value: number) { this.memory.stepsFromLastSite = value }
+
+  private get nearbyLookTiles(): Array<{ dir: number, tile: LookTile }> {
+    if (this._nearbyLookTiles === undefined) {
+      const { x, y } = this.creep.pos
+      this._nearbyLookTiles = []
+      for (const dir in DIRECTION_COORDINATE_DELTAS) {
+        const [dx, dy] = DIRECTION_COORDINATE_DELTAS[dir]
+        const nx = x + dx
+        const ny = y + dy
+        const tile = this.creep.room.getLookTile(nx, ny)
+        if (tile === undefined) { continue }
+        this._nearbyLookTiles.push({ dir: parseInt(dir, 10), tile })
+      }
     }
-    return result
+    return this._nearbyLookTiles
   }
 
-  private getNearbySpawn(): Spawn | undefined {
-    let spawn: Spawn | undefined
-    const spawnTile = _.find(this.nearbyLookTiles, ({ tile }) => (tile.structures.spawn || []).length > 0)
-    if (spawnTile !== undefined) { spawn = _.first(spawnTile.tile.structures.spawn) as Spawn }
-    return spawn
+  private get nearbySpawn(): Spawn | null {
+    if (this._nearbySpawn === undefined) {
+      this._nearbySpawn = null
+      const spawnTile = _.find(this.nearbyLookTiles, ({ tile }) => (tile.structures.spawn || []).length > 0)
+      if (spawnTile !== undefined) { this._nearbySpawn = _.first(spawnTile.tile.structures.spawn) as Spawn }
+    }
+    return this._nearbySpawn
   }
 
-  private getNearbySource(): Source | undefined {
-    let source: Source | undefined
-    const sourceTile = _.find(
-      this.nearbyLookTiles,
-      ({ tile }) => (tile.sources || []).length > 0 && _.every(tile.sources, (s) => s.energy > 0)
-    )
-    if (sourceTile !== undefined) { source = _.first(sourceTile.tile.sources) }
-    return source
+  private get nearbySource(): Source | null {
+    if (this._nearbySource === undefined) {
+      this._nearbySource = null
+      const sourceTile = _.find(
+        this.nearbyLookTiles,
+        ({ tile }) => (tile.sources || []).length > 0 && _.every(tile.sources, (s) => s.energy > 0)
+      )
+      if (sourceTile !== undefined) { this._nearbySource = _.first(sourceTile.tile.sources) }
+    }
+    return this._nearbySource
   }
 
   private getSearchDirection(): number {
