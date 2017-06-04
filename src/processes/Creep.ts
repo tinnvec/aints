@@ -157,17 +157,7 @@ export class CreepProcess extends Process {
     return this._lastMoveWasSuccessful
   }
 
-  private get searchPheromone(): string {
-    if (this.memory.searchPheromone === undefined) { this.memory.searchPheromone = 'energy' }
-    return this.memory.searchPheromone
   }
-  private set searchPheromone(value: string) { this.memory.searchPheromone = value }
-
-  private get stepsFromLastSite(): number {
-    if (this.memory.stepsFromLastSite === undefined) { this.memory.stepsFromLastSite = 0 }
-    return this.memory.stepsFromLastSite
-  }
-  private set stepsFromLastSite(value: number) { this.memory.stepsFromLastSite = value }
 
   private get nearbyLookTiles(): Array<{ dir: number, tile: LookTile }> {
     if (this._nearbyLookTiles === undefined) {
@@ -205,6 +195,24 @@ export class CreepProcess extends Process {
     }
     return this._nearbySource
   }
+
+  private get searchPheromone(): string {
+    if (this.memory.searchPheromone === undefined) { this.memory.searchPheromone = 'energy' }
+    return this.memory.searchPheromone
+  }
+  private set searchPheromone(value: string) { this.memory.searchPheromone = value }
+
+  private get stepsFromLastSite(): number {
+    if (this.memory.stepsFromLastSite === undefined) { this.memory.stepsFromLastSite = 0 }
+    return this.memory.stepsFromLastSite
+  }
+  private set stepsFromLastSite(value: number) { this.memory.stepsFromLastSite = value }
+
+  private get stuckCounter(): number {
+    if (this.memory.stuckCounter === undefined) { this.memory.stuckCounter = 0 }
+    return this.memory.stuckCounter
+  }
+  private set stuckCounter(value: number) { this.memory.stuckCounter = value }
 
   private getSearchDirection(): number {
     return _(this.nearbyLookTiles)
