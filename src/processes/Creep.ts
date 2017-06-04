@@ -22,6 +22,7 @@ export class CreepProcess extends Process {
 
   private _directionPriorities?: number[]
   private _lastMoveWasSuccessful?: boolean
+  private _nearbyDroppedEnergy?: Resource | null
   private _nearbyLookTiles?: Array<{ dir: number, tile: LookTile }>
   private _nearbySpawn?: Spawn | null
   private _nearbySource?: Source | null
@@ -52,6 +53,10 @@ export class CreepProcess extends Process {
       }
     }
 
+    if (this.nearbyDroppedEnergy !== null && _.sum(this.creep.carry) < this.creep.carryCapacity) {
+      this.creep.pickup(this.nearbyDroppedEnergy)
+    }
+
     if (this.nearbySpawn !== null) {
       if (this.creep.carry.energy || 0 > 0) {
         this.creep.transfer(this.nearbySpawn, RESOURCE_ENERGY)
@@ -72,7 +77,10 @@ export class CreepProcess extends Process {
       if (this.isHarvesting) { this.creep.harvest(this.nearbySource) }
     }
 
-    if (this.isSearching && this.stepsFromLastSite >= Config.SEARCH_MAX_STEPS) {
+    if (
+      this.isSearching &&
+      (this.stepsFromLastSite >= Config.SEARCH_MAX_STEPS || _.sum(this.creep.carry) >= this.creep.carryCapacity)
+     ) {
       this.depositPheromone = undefined
       this.isSearching = false
     }
@@ -160,6 +168,15 @@ export class CreepProcess extends Process {
     return this._lastMoveWasSuccessful
   }
 
+  private get nearbyDroppedEnergy(): Resource | null {
+    if (this._nearbyDroppedEnergy === undefined) {
+      this._nearbyDroppedEnergy = null
+      const droppedEnergyTile = _.find(this.nearbyLookTiles, ({ tile }) => (tile.resources.energy || []).length > 0)
+      if (droppedEnergyTile !== undefined) {
+        this._nearbyDroppedEnergy = _.first(droppedEnergyTile.tile.resources.energy)
+      }
+    }
+    return this._nearbyDroppedEnergy
   }
 
   private get nearbyLookTiles(): Array<{ dir: number, tile: LookTile }> {
