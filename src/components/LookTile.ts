@@ -3,7 +3,8 @@ import { PheromoneNetwork } from './PheromoneNetwork'
 export class LookTile extends RoomPosition {
   public readonly constructionSites: { [structureType: string]: ConstructionSite[] }
   public readonly creeps: Creep[]
-  public readonly pheromones: { [type: string]: number }
+  public readonly pheromones: { [pheromoneType: string]: number }
+  public readonly resources: { [resourceType: string]: Resource[] }
   public readonly sources: Source[]
   public readonly structures: { [structureType: string]: Structure[] }
   public readonly terrain: string[]
@@ -14,6 +15,8 @@ export class LookTile extends RoomPosition {
     this.creeps = this.lookFor<Creep>(LOOK_CREEPS)
     this.sources = this.lookFor<Source>(LOOK_SOURCES)
     this.terrain = this.lookFor<string>(LOOK_TERRAIN)
+
+    this.resources = _.groupBy(this.lookFor<Resource>(LOOK_RESOURCES), ({ resourceType }) => resourceType)
 
     this.constructionSites =
       _.groupBy(this.lookFor<ConstructionSite>(LOOK_CONSTRUCTION_SITES), ({ structureType }) => structureType)

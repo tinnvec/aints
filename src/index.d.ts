@@ -9,6 +9,7 @@ interface LookTile extends RoomPosition {
   readonly constructionSites: { [structureType: string]: ConstructionSite[] }
   readonly creeps: Creep[]
   readonly pheromones: { [type: string]: number }
+  readonly resources: { [resourceType: string]: Resource[] }
   readonly sources: Source[]
   readonly structures: { [structureType: string]: Structure[] }
   readonly terrain: string[]
