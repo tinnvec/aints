@@ -10,6 +10,7 @@ export class SpawnProcess extends Process {
     const proc = new SpawnProcess(0, undefined, ProcessPriority.Normal)
     Kernel.addProcess(proc)
     proc.memory.spawnName = spawnName
+    Kernel.storeProcessTable()
     return proc.pid
   }
 

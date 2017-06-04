@@ -20,6 +20,7 @@ export class CreepProcess extends Process {
     proc.memory.searchPheromone = 'energy'
     proc.memory.homeDirections = []
     proc.memory.stepsFromLastSite = 0
+    Kernel.storeProcessTable()
     return proc.pid
   }
 

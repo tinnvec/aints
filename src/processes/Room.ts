@@ -10,6 +10,7 @@ export class RoomProcess extends Process {
     const proc = new RoomProcess(0)
     Kernel.addProcess(proc)
     proc.memory.roomName = roomName
+    Kernel.storeProcessTable()
     return proc.pid
   }
 
