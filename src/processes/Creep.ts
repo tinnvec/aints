@@ -15,11 +15,6 @@ export class CreepProcess extends Process {
     const proc = new CreepProcess(0)
     Kernel.addProcess(proc)
     proc.memory.creepName = creepName
-    proc.memory.lastDirection = 0
-    proc.memory.isSearching = true
-    proc.memory.searchPheromone = 'energy'
-    proc.memory.homeDirections = []
-    proc.memory.stepsFromLastSite = 0
     Kernel.storeProcessTable()
     return proc.pid
   }
@@ -54,6 +49,12 @@ export class CreepProcess extends Process {
   }
 
   private getDirectionPriorities(lastDirection: number): number[] {
+  private get depositPheromone(): string | undefined {
+    return this.memory.depositPheromone
+  }
+  private set depositPheromone(value: string | undefined) { this.memory.depositPheromone = value }
+
+  private get directionPriorities(): number[] {
     // Directions
     // 8 1 2
     // 7 * 3
@@ -71,6 +72,47 @@ export class CreepProcess extends Process {
       const dirs = [dl, dr]
       if (i === 1) { dirs.push(lastDirection) }
       result.push(..._.shuffle(dirs))
+
+  private get homeDirections(): number[] {
+    if (this.memory.homeDirections === undefined) { this.memory.homeDirections = [] }
+    return this.memory.homeDirections
+  }
+  private set homeDirections(value: number[]) { this.memory.homeDirections = value }
+
+  private get isHarvesting(): boolean {
+    if (this.memory.isHarvesting === undefined) { this.memory.isHarvesting = false }
+    return this.memory.isHarvesting
+  }
+  private set isHarvesting(value: boolean) { this.memory.isHarvesting = value }
+
+  private get isSearching(): boolean {
+    if (this.memory.isSearching === undefined) { this.memory.isSearching = true }
+    return this.memory.isSearching
+  }
+  private set isSearching(value: boolean) { this.memory.isSearching = value }
+
+  private get lastDirection(): number {
+    if (this.memory.lastDirection === undefined) { this.memory.lastDirection = 0 }
+    return this.memory.lastDirection
+  }
+  private set lastDirection(value: number) { this.memory.lastDirection = value }
+
+  private get lastFatigue(): number {
+    if (this.memory.lastFatigue === undefined) { this.memory.lastFatigue = 0 }
+    return this.memory.lastFatigue
+  }
+  private set lastFatigue(value: number) { this.memory.lastFatigue = value }
+
+  private get lastPosition(): { x: number, y: number} {
+    if (this.memory.lastPosition === undefined) { this.memory.lastPosition = { x: 0, y: 0 } }
+    return this.memory.lastPosition
+  }
+  private set lastPosition(value: { x: number, y: number}) { this.memory.lastPosition = value }
+
+  private get lastMoveWasSuccessful(): boolean {
+    if (this._lastMoveWasSuccessful === undefined) {
+      this._lastMoveWasSuccessful = this.lastFatigue < 1 &&
+        (this.creep.pos.x !== this.lastPosition.x || this.creep.pos.y !== this.lastPosition.y)
     }
     let dRev = lastDirection + 4
     if (dRev > 8) { dRev -= 8 }
@@ -88,6 +130,20 @@ export class CreepProcess extends Process {
       const tile = this.creep.room.getLookTile(nx, ny)
       if (tile === undefined) { continue }
       result.push({ dir: parseInt(dir, 10), tile })
+    return this._lastMoveWasSuccessful
+  }
+
+  private get searchPheromone(): string {
+    if (this.memory.searchPheromone === undefined) { this.memory.searchPheromone = 'energy' }
+    return this.memory.searchPheromone
+  }
+  private set searchPheromone(value: string) { this.memory.searchPheromone = value }
+
+  private get stepsFromLastSite(): number {
+    if (this.memory.stepsFromLastSite === undefined) { this.memory.stepsFromLastSite = 0 }
+    return this.memory.stepsFromLastSite
+  }
+  private set stepsFromLastSite(value: number) { this.memory.stepsFromLastSite = value }
     }
     return result
   }
