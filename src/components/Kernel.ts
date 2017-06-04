@@ -77,6 +77,8 @@ export class Kernel {
 
   private static garbageCollection() {
     Memory.processMemory = _.pick(Memory.processMemory, (_: any, k: string) => this.processTable[k] !== undefined)
+    Memory.creeps = _.pick(Memory.creeps, (_: any, k: string) => Game.creeps[k] !== undefined)
+    Memory.rooms = _.pick(Memory.rooms, (_: any, k: string) => Game.rooms[k] !== undefined)
   }
 
   private static loadPheromoneNetwork() {
