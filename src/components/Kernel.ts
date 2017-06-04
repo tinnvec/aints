@@ -68,6 +68,11 @@ export class Kernel {
     this.storeProcessTable()
   }
 
+  public static storeProcessTable() {
+    const liveProcs = _.filter(this.processTable, (p) => p.status !== ProcessStatus.Dead)
+    Memory.processTable = _.map(liveProcs, (p) => [p.pid, p.parentPID, p.constructor.name, p.priority])
+  }
+
   private static queue: Process[] = []
 
   private static garbageCollection() {
@@ -107,10 +112,5 @@ export class Kernel {
         Memory.pheromoneNetwork.layers[layerName][roomName] = PheromoneNetwork.layers[layerName][roomName].serialize()
       }
     }
-  }
-
-  private static storeProcessTable() {
-    const liveProcs = _.filter(this.processTable, (p) => p.status !== ProcessStatus.Dead)
-    Memory.processTable = _.map(liveProcs, (p) => [p.pid, p.parentPID, p.constructor.name, p.priority])
   }
 }
