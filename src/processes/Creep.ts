@@ -47,7 +47,7 @@ export class CreepProcess extends Process {
     } else if (this.lastFatigue < 1) {
       if (this.isSearching) {
         this.lastDirection = 0
-      } else if (!this.isHarvesting) {
+      } else if (!this.isHarvesting && !this.isUpgrading) {
         this.stuckCounter++
         if (this.stuckCounter > 5) { return this.creep.suicide() }
         this.homeDirections.push(this.lastDirection)
@@ -58,18 +58,6 @@ export class CreepProcess extends Process {
       this.creep.pickup(this.nearbyDroppedEnergy)
     }
 
-    if (this.nearbySpawn !== null) {
-      if (this.creep.carry.energy || 0 > 0) {
-        this.creep.transfer(this.nearbySpawn, RESOURCE_ENERGY)
-        this.lastDirection = 0
-      } else {
-        this.depositPheromone = undefined
-        this.homeDirections = []
-        this.isSearching = true
-        this.stepsFromLastSite = 0
-      }
-    }
-
     if (this.nearbySource !== null) {
       this.depositPheromone = 'energy'
       this.isHarvesting = _.sum(this.creep.carry) < this.creep.carryCapacity
@@ -78,10 +66,41 @@ export class CreepProcess extends Process {
       if (this.isHarvesting) { this.creep.harvest(this.nearbySource) }
     }
 
-    if (
-      this.isSearching &&
-      (this.stepsFromLastSite >= Config.SEARCH_MAX_STEPS || _.sum(this.creep.carry) >= this.creep.carryCapacity)
-     ) {
+    if (this.nearbySpawn !== null) {
+      const creepEnergyAmt = this.creep.carry.energy || 0
+      const spawnIsFull = this.nearbySpawn.energy + (creepEnergyAmt) > this.nearbySpawn.energyCapacity
+      if (creepEnergyAmt > 0) {
+        if (!spawnIsFull) {
+          this.creep.transfer(this.nearbySpawn, RESOURCE_ENERGY)
+        } else {
+          this.searchPheromone = 'controller'
+        }
+        this.lastDirection = 0
+      } else {
+        this.searchPheromone = 'energy'
+      }
+
+      if (creepEnergyAmt < 1 || spawnIsFull) {
+        this.depositPheromone = undefined
+        this.isSearching = true
+        this.homeDirections = []
+        this.stepsFromLastSite = 0
+      }
+    }
+
+    if (this.nearbyController !== null && this.nearbyController.my) {
+      this.depositPheromone = 'controller'
+      this.isUpgrading = (this.creep.carry.energy || 0) > 0
+      this.isSearching = false
+      this.stepsFromLastSite = 0
+      if (this.isUpgrading) { this.creep.upgradeController(this.nearbyController) }
+    }
+
+    if (this.isSearching && (
+      this.stepsFromLastSite >= Config.SEARCH_MAX_STEPS || (
+        _.sum(this.creep.carry) >= this.creep.carryCapacity && this.searchPheromone === 'energy'
+      )
+    )) {
       this.depositPheromone = undefined
       this.isSearching = false
     }
@@ -266,7 +285,7 @@ export class CreepProcess extends Process {
   private move() {
     this.lastPosition = { x: this.creep.pos.x, y: this.creep.pos.y }
     this.lastFatigue = this.creep.fatigue
-    if (this.creep.fatigue > 0 || this.isHarvesting) { return }
+    if (this.creep.fatigue > 0 || this.isHarvesting || this.isUpgrading) { return }
     const dir = this.isSearching ? this.getSearchDirection() : this.homeDirections.pop()
     if (dir === undefined) { return }
     this.lastDirection = dir
