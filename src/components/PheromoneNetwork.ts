@@ -62,23 +62,3 @@ export class PheromoneNetwork {
 //     }
 //   }
 // }
-
-// public draw(layer: string, color: string = '#CCCCCC') {
-//   const vis = new RoomVisual(this.room.name)
-//   let x: number
-//   let y: number
-//   for (y = 0; y < 50; ++y) {
-//     for (x = 0; x < 50; ++x) {
-//       const str = this.getTileLevel(layer, x, y)
-//       if (str > 0) {
-//         vis.circle(x, y, {
-//           fill: color,
-//           opacity: 1 / ((Object.keys(this.layers).length) * 2),
-//           radius: str / (Config.PHEROMONE_MAX_TILE_AMOUNT * 2),
-//           stroke: color,
-//           strokeWidth: 0.1,
-//         })
-//       }
-//     }
-//   }
-// }
