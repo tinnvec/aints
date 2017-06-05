@@ -277,9 +277,10 @@ export class CreepProcess extends Process {
         this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(Math.random() < 0.33)
       ).sort((a, b) =>
         this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir)
-      ).max(({ tile }) =>
-        tile.getPheromoneLevels(this.searchPheromone).searchLevel
-      ).dir
+      ).max(({ tile }) => {
+        const { searchLevel, otherLevel } = tile.getPheromoneLevels(this.searchPheromone)
+        return searchLevel - otherLevel
+      }).dir
   }
 
   private move() {
