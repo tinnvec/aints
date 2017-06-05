@@ -22,6 +22,7 @@ export class CreepProcess extends Process {
 
   private _directionPriorities?: number[]
   private _lastMoveWasSuccessful?: boolean
+  private _nearbyController?: Controller | null
   private _nearbyDroppedEnergy?: Resource | null
   private _nearbyLookTiles?: Array<{ dir: number, tile: LookTile }>
   private _nearbySpawn?: Spawn | null
@@ -166,6 +167,17 @@ export class CreepProcess extends Process {
         (this.creep.pos.x !== this.lastPosition.x || this.creep.pos.y !== this.lastPosition.y)
     }
     return this._lastMoveWasSuccessful
+  }
+
+  private get nearbyController(): Controller | null {
+    if (this._nearbyController === undefined) {
+      this._nearbyController = null
+      const controllerTile = _.find(this.nearbyLookTiles, ({ tile }) => (tile.structures.controller || []).length > 0)
+      if (controllerTile !== undefined) {
+        this._nearbyController = _.first(controllerTile.tile.structures.controller) as Controller
+      }
+    }
+    return this._nearbyController
   }
 
   private get nearbyDroppedEnergy(): Resource | null {
