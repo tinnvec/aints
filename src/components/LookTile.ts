@@ -29,11 +29,20 @@ export class LookTile extends RoomPosition {
   }
 
   public getPheromoneLevels(searchPheromoneType: string): { searchLevel: number, otherLevel: number } {
-    const result = { searchLevel: this.pheromones[searchPheromoneType] || 0, otherLevel: 0 }
+    const resultSearchLevel = this.pheromones[searchPheromoneType] || 0
+    let otherLevel = 0
+    let otherTypeCount = 0
     for (const pheromoneType in this.pheromones) {
-      if (pheromoneType !== searchPheromoneType) { result.otherLevel += this.pheromones[pheromoneType] || 0 }
+      if (pheromoneType !== searchPheromoneType) {
+        const level = this.pheromones[pheromoneType] || 0
+        if (level > 0) {
+          otherLevel += level
+          otherTypeCount++
+        }
+      }
     }
-    return result
+    const resultOtherLevel = otherTypeCount < 1 ? 0 : Math.floor(otherLevel / otherTypeCount)
+    return { searchLevel: resultSearchLevel, otherLevel: resultOtherLevel }
   }
 
   public isWalkable(ignoreCreeps?: boolean) {
