@@ -143,6 +143,12 @@ export class CreepProcess extends Process {
   }
   private set isSearching(value: boolean) { this.memory.isSearching = value }
 
+  private get isUpgrading(): boolean {
+    if (this.memory.isUpgrading === undefined) { this.memory.isUpgrading = false }
+    return this.memory.isUpgrading
+  }
+  private set isUpgrading(value: boolean) { this.memory.isUpgrading = value }
+
   private get lastDirection(): number {
     if (this.memory.lastDirection === undefined) { this.memory.lastDirection = 0 }
     return this.memory.lastDirection
