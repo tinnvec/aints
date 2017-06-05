@@ -7,7 +7,9 @@ export const ENABLE_ROOM_VISUALS: boolean = true
 export const PHEROMONE_MAX_TILE_AMOUNT: number = 255
 export const PHEROMONE_DECAY_TIME: number = 9
 
-export const SEARCH_MAX_STEPS: number = Math.floor(PHEROMONE_MAX_TILE_AMOUNT / 2)
+export const CREEP_MAX_SEARCH_STEPS: number = Math.floor(PHEROMONE_MAX_TILE_AMOUNT / 2)
+export const CREEP_MAX_STUCK_TICKS = 10
+export const CREEP_SEARCH_IGNORE_CREEPS_CHANCE = 0.25
 
 /* --- Default Config --- */
 

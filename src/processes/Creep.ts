@@ -49,7 +49,7 @@ export class CreepProcess extends Process {
         this.lastDirection = 0
       } else if (!this.isHarvesting && !this.isUpgrading) {
         this.stuckCounter++
-        if (this.stuckCounter > 5) { return this.creep.suicide() }
+        if (this.stuckCounter > Config.CREEP_MAX_STUCK_TICKS) { return this.creep.suicide() }
         this.homeDirections.push(this.lastDirection)
       }
     }
@@ -97,7 +97,7 @@ export class CreepProcess extends Process {
     }
 
     if (this.isSearching && (
-      this.stepsFromLastSite >= Config.SEARCH_MAX_STEPS || (
+      this.stepsFromLastSite >= Config.CREEP_MAX_SEARCH_STEPS || (
         _.sum(this.creep.carry) >= this.creep.carryCapacity && this.searchPheromone === 'energy'
       )
     )) {
@@ -274,7 +274,8 @@ export class CreepProcess extends Process {
   private getSearchDirection(): number {
     return _(this.nearbyLookTiles)
       .filter(({ dir, tile }) =>
-        this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(Math.random() < 0.33)
+        this.directionPriorities.indexOf(dir) !== -1 &&
+        tile.isWalkable(Math.random() < Config.CREEP_SEARCH_IGNORE_CREEPS_CHANCE)
       ).sort((a, b) =>
         this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir)
       ).max(({ tile }) => {
