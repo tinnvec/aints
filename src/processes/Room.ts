@@ -24,8 +24,11 @@ export class RoomProcess extends Process {
     for (const pheromoneType in PheromoneNetwork.layers) {
       const cm = PheromoneNetwork.layers[pheromoneType][this.memory.roomName]
       if (cm === undefined) { continue }
-      let color = '#CCCCCC'
-      if (pheromoneType === 'energy') { color = '#FFE87B' }
+      const color =
+        pheromoneType === 'energy' ? '#FFE87B' :
+        pheromoneType === 'controller' ? '#386CA7' :
+        '#CCCCCC'
+
       const vis = new RoomVisual(this.memory.roomName)
       let x: number
       let y: number
