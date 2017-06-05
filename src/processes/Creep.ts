@@ -68,7 +68,7 @@ export class CreepProcess extends Process {
 
     if (this.nearbySpawn !== null) {
       const creepEnergyAmt = this.creep.carry.energy || 0
-      const spawnIsFull = this.nearbySpawn.energy + (creepEnergyAmt) > this.nearbySpawn.energyCapacity
+      const spawnIsFull = this.nearbySpawn.energy >= this.nearbySpawn.energyCapacity
       if (creepEnergyAmt > 0) {
         if (!spawnIsFull) {
           this.creep.transfer(this.nearbySpawn, RESOURCE_ENERGY)
