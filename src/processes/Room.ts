@@ -22,7 +22,8 @@ export class RoomProcess extends Process {
 
   private draw() {
     for (const pheromoneType in PheromoneNetwork.layers) {
-      const cm = PheromoneNetwork.layers[pheromoneType][this.memory.roomName]
+      if (PheromoneNetwork.layers[pheromoneType][this.memory.roomName] === undefined) { continue }
+      const cm = PheromoneNetwork.layers[pheromoneType][this.memory.roomName].levels
       if (cm === undefined) { continue }
       const color =
         pheromoneType === 'energy' ? '#FFE87B' :
@@ -35,15 +36,14 @@ export class RoomProcess extends Process {
       for (y = 0; y < 50; ++y) {
         for (x = 0; x < 50; ++x) {
           const str = cm.get(x, y)
-          if (str > 0) {
-            vis.circle(x, y, {
-              fill: color,
-              opacity: 0.33,
-              radius: str / (255 * 2),
-              stroke: color,
-              strokeWidth: 0.1,
-            })
-          }
+          if (str < 1) { continue }
+          vis.circle(x, y, {
+            fill: color,
+            opacity: 0.33,
+            radius: str / (Config.PHEROMONE_MAX_TILE_AMOUNT * 2),
+            stroke: color,
+            strokeWidth: 0.1,
+          })
         }
       }
     }

@@ -86,8 +86,10 @@ export class Kernel {
     Memory.pheromoneNetwork.layers = Memory.pheromoneNetwork.layers || {}
     for (const layerName in Memory.pheromoneNetwork.layers) {
       for (const roomName in Memory.pheromoneNetwork.layers[layerName]) {
-        PheromoneNetwork.layers[layerName][roomName] =
-          PathFinder.CostMatrix.deserialize(Memory.pheromoneNetwork.layers[layerName][roomName])
+        PheromoneNetwork.layers[layerName][roomName] = {
+          decayTimes: Memory.pheromoneNetwork.layers[layerName][roomName].decayTimes,
+          levels: PathFinder.CostMatrix.deserialize(Memory.pheromoneNetwork.layers[layerName][roomName].levels)
+        }
       }
     }
   }
@@ -111,7 +113,10 @@ export class Kernel {
     for (const layerName in PheromoneNetwork.layers) {
       Memory.pheromoneNetwork.layers[layerName] = Memory.pheromoneNetwork.layers[layerName] || {}
       for (const roomName in PheromoneNetwork.layers[layerName]) {
-        Memory.pheromoneNetwork.layers[layerName][roomName] = PheromoneNetwork.layers[layerName][roomName].serialize()
+        Memory.pheromoneNetwork.layers[layerName][roomName] = {
+          decayTimes: PheromoneNetwork.layers[layerName][roomName].decayTimes,
+          levels: PheromoneNetwork.layers[layerName][roomName].levels.serialize()
+        }
       }
     }
   }
