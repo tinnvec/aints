@@ -261,26 +261,19 @@ export class CreepProcess extends Process {
     if (dir === undefined) { return }
     this.lastDirection = dir
     // exit pheromones check
-    const lookTile = _.find(this.nearbyLookTiles, (lt) => lt.dir === dir)
-    if (lookTile !== undefined) {
-      const { tile } = lookTile
-      if (this.depositPheromone !== undefined && (tile.x === 0 || tile.y === 0 || tile.x === 49 || tile.y === 49)) {
-        const currentLevel = PheromoneNetwork.getTypeLevelAt(this.depositPheromone, tile.x, tile.y, tile.roomName)
-        const newAmount = Config.PHEROMONE_MAX_TILE_AMOUNT - (this.stepsFromLastSite * 2)
-        if (newAmount > currentLevel) {
-          PheromoneNetwork.setTypeLevelAt(this.depositPheromone, newAmount, tile.x, tile.y, tile.roomName)
-        }
-      }
+    const { tile } = _.find(this.nearbyLookTiles, (lt) => lt.dir === dir)
+    if (tile !== undefined && (tile.x === 0 || tile.y === 0 || tile.x === 49 || tile.y === 49)) {
+      this.updatePheromoneLevel(tile)
     }
     this.creep.move(dir)
   }
 
-  private updatePheromoneLevel() {
+  private updatePheromoneLevel(tile?: LookTile) {
     if (this.depositPheromone === null) { return }
     if (!this.lastMoveWasSuccessful) { return }
-    const { x, y, roomName } = this.creep.pos
+    const { x, y, roomName } = tile !== undefined ? tile : this.creep.pos
     const currentLevel = PheromoneNetwork.getTypeLevelAt(this.depositPheromone, x, y, roomName)
-    const newAmount = Config.PHEROMONE_MAX_TILE_AMOUNT - (this.stepsFromLastSite * 2)
+    const newAmount = Math.ceil(Config.PHEROMONE_MAX_TILE_AMOUNT / (this.stepsFromLastSite + 1))
     if (newAmount < currentLevel) { return }
     PheromoneNetwork.setTypeLevelAt(this.depositPheromone, newAmount, x, y, roomName)
   }
