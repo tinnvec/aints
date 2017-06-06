@@ -1,9 +1,11 @@
 import { Kernel } from '../components/Kernel'
 import { PheromoneNetwork } from '../components/PheromoneNetwork'
 import { Process } from '../components/Process'
-import * as Config from '../config/config'
+
 import { memorizeProcessProperty } from '../decorators/memorizeProcessProperty'
 import { registerProcess } from '../decorators/registerProcess'
+
+import * as Config from '../config/config'
 
 const DIRECTION_COORDINATE_DELTAS: { [dir: number]: [number, number] } = {
   8: [-1, -1],  1: [0, -1],  2: [1, -1],
