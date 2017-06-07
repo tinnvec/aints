@@ -1,4 +1,6 @@
 import { Kernel } from './components/Kernel'
+import { Stats } from './components/Stats'
+
 import { log } from './lib/logger/log'
 
 import './prototypes/Room'
@@ -9,4 +11,5 @@ export function loop() {
   Kernel.load()
   Kernel.run()
   Kernel.save()
+  Stats.collect()
 }
