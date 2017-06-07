@@ -270,10 +270,10 @@ export class CreepProcess extends Process {
     this.creep.move(dir)
   }
 
-  private updatePheromoneLevel(tile?: LookTile) {
+  private updatePheromoneLevel(lookTile?: LookTile) {
     if (this.depositPheromone === null) { return }
     if (!this.lastMoveWasSuccessful) { return }
-    const { x, y, roomName } = tile !== undefined ? tile : this.creep.pos
+    const { x, y, roomName } = lookTile !== undefined ? lookTile : this.creep.pos
     const currentLevel = PheromoneNetwork.getTypeLevelAt(this.depositPheromone, x, y, roomName)
     const newAmount = Math.ceil(Config.PHEROMONE_MAX_TILE_AMOUNT / (this.stepsFromLastSite + 1))
     if (newAmount < currentLevel) { return }
