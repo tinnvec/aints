@@ -246,10 +246,9 @@ export class CreepProcess extends Process {
     return _(this.nearbyLookTiles)
       .filter(({ dir, tile }) =>
         this.directionPriorities.indexOf(dir) !== -1 &&
-        tile.isWalkable(Math.random() < Config.CREEP_SEARCH_IGNORE_CREEPS_CHANCE)
-      ).sort((a, b) =>
-        this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir)
-      ).max(({ tile }) => {
+        tile.isWalkable(Math.random() < Config.CREEP_SEARCH_IGNORE_CREEPS_CHANCE))
+      .sort((a, b) => this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir))
+      .max(({ tile }) => {
         const { searchLevel, otherLevel } = tile.getPheromoneLevels(this.searchPheromone)
         return searchLevel - otherLevel
       }).dir
@@ -274,8 +273,14 @@ export class CreepProcess extends Process {
     if (this.depositPheromone === null) { return }
     if (!this.lastMoveWasSuccessful) { return }
     const { x, y, roomName } = lookTile !== undefined ? lookTile : this.creep.pos
+    const lowestNearbyDepositPheromoneValue = _(this.nearbyLookTiles)
+      .map(({ tile }) => tile.getPheromoneLevels(this.searchPheromone).searchLevel)
+      .min()
     const currentLevel = PheromoneNetwork.getTypeLevelAt(this.depositPheromone, x, y, roomName)
-    const newAmount = Math.ceil(Config.PHEROMONE_MAX_TILE_AMOUNT / (this.stepsFromLastSite + 1))
+    const newAmount = Math.max(
+      lowestNearbyDepositPheromoneValue,
+      Math.ceil(Config.PHEROMONE_MAX_TILE_AMOUNT / (this.stepsFromLastSite + 1))
+    )
     if (newAmount < currentLevel) { return }
     PheromoneNetwork.setTypeLevelAt(this.depositPheromone, newAmount, x, y, roomName)
   }
