@@ -23,6 +23,7 @@ interface Memory {
   pidCounter: number
   processMemory: any
   processTable: any
+  stats: any
 }
 
 interface CostMatrix {
