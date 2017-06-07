@@ -262,9 +262,11 @@ export class CreepProcess extends Process {
     if (dir === undefined) { return }
     this.lastDirection = dir
     // exit pheromones check
-    const { tile } = _.find(this.nearbyLookTiles, (lt) => lt.dir === dir)
-    if (tile !== undefined && (tile.x === 0 || tile.y === 0 || tile.x === 49 || tile.y === 49)) {
-      this.updatePheromoneLevel(tile)
+    if (this.nearbyLookTiles.length > 0) {
+      const { tile } = _.find(this.nearbyLookTiles, (lt) => lt.dir === dir)
+      if (tile !== undefined && (tile.x === 0 || tile.y === 0 || tile.x === 49 || tile.y === 49)) {
+        this.updatePheromoneLevel(tile)
+      }
     }
     this.creep.move(dir)
   }
