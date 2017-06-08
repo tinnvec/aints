@@ -4,25 +4,32 @@
 
 Screeps AI using ants and other social colony insects as a model.
 
-## Searching
+## Creep
 
-1. Place pheromones for last visited site
-    - Reduced by steps taken since visiting the site
-2. Take Action if near site
-    - Transfer Energy
-    - Harvest Energy
+1. If last move was successful or creep is fatigued, increase steps from last site.
+2. If creep is searching, remember the opposite direction to build a path home.
+3. If last move was not successful and creep is not fatigued, increase stuck counter.
+    - Instruct creep to suicide if over specified limit.
+4. Pick it up nearby dropped energy.
+5. Take Action if near site
+    - Transfer Energy to Spawn
+    - Harvest Energy from Source
     - Upgrade Controller
-3. Move if not taking action or fatigued
-    - Chosen by highest level of pheromones being searched for and lowext level of pheromones being placed
+6. If returning Home, place pheromones for last visited site
+    - Reduced by steps taken since visiting the site
+7. Move if not taking action or fatigued
+    - Favor forward movement
+    - Chosen by search pheromone level
+        - Reduced by average level of other pheromone types
 
-## Spawning
+## Spawn
 
-- Single creep, capable of working and carrying
-- No limit
+- Create creeps capable of working and carrying
+    - No limit
 
-## Room Updates (Weather)
-
-- Pheromone decay
+## Pheromone decay
+- Each pheromone deposit has a decay timer
+- Decay timer is reset on update of pheromone amount
 
 ---
 
@@ -48,6 +55,7 @@ Screeps AI using ants and other social colony insects as a model.
 - [From Real to Artificial Ants](https://mitpress.mit.edu/sites/default/files/titles/content/9780262042192_sch_0001.pdf)
 - [Ant Foraging Revisited](http://ai2-s2-pdfs.s3.amazonaws.com/0d92/349d41b77042a27e64526239198b2e117925.pdf)
 - [Ant Algorithms for Discrete Optimization](https://www.cs.ubc.ca/~hutter/EARG.shtml/earg/papers04-05/artificial_life.pdf)
+- [Traffic Wouldn’t Jam If Drivers Behaved Like Ants](http://nautil.us/blog/-traffic-wouldnt-jam-if-drivers-behaved-like-ants)
 
 ---
 
