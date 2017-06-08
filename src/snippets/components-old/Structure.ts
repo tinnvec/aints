@@ -1,3 +1,8 @@
+interface Structure {
+  memory: any
+}
+
+
 // --- Properties ---
 
 Object.defineProperty(Structure.prototype, 'memory', {
@@ -14,7 +19,3 @@ Object.defineProperty(Structure.prototype, 'memory', {
     Memory.structures[this.id] = value
   }
 })
-
-// --- Methods ---
-
-Structure.prototype.run = function(this: Structure) { return }

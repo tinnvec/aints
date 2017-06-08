@@ -2,13 +2,14 @@ import { LogLevels } from '../lib/logger/logLevels'
 
 /* --- AInts Specific Config --- */
 
-export const ENABLE_PHEROMONE_VISUALS: boolean = true
+export const ENABLE_ROOM_VISUALS: boolean = true
 
 export const PHEROMONE_MAX_TILE_AMOUNT: number = 255
-export const PHEROMONE_DECAY_TIME: number = 6
-export const PHEROMONE_MIN_DEPOSIT_AMOUNT: number = Math.ceil((CARRY_CAPACITY / HARVEST_POWER) / PHEROMONE_DECAY_TIME)
+export const PHEROMONE_DECAY_TIME: number = 25
 
-export const SEARCH_MAX_STEPS: number = PHEROMONE_MAX_TILE_AMOUNT / PHEROMONE_MIN_DEPOSIT_AMOUNT
+export const CREEP_MAX_SEARCH_STEPS: number = 100
+export const CREEP_MAX_STUCK_TICKS = 10
+export const CREEP_SEARCH_IGNORE_CREEPS_CHANCE = 0.25
 
 /* --- Default Config --- */
 

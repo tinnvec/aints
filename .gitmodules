@@ -1,0 +1,3 @@
+[submodule "src/snippets/RoomVisual"]
+	path = src/snippets/RoomVisual
+	url = https://gist.github.com/5da45ce88668214393d4b0439393fd9f.git

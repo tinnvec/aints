@@ -1,5 +1,42 @@
 import * as Config from '../config/config'
 
+interface Creep {
+  _currentDepositPheromone?: string
+  _currentSearchPheromone?: string
+  _directionPriorities?: number[]
+  _isCaryingEnergy?: boolean
+  _isHarvesting?: boolean
+  _isSearching?: boolean
+  _isUpgrading?: boolean
+  _lastDirection?: number
+  _lastMoveWasSuccessful?: boolean
+  _lastPheromoneDepositAmount?: number
+  _nearbyController?: Controller
+  _nearbySource?: Source
+  _nearbySpawn?: Spawn
+  _nearbyTiles?: Array<{ dir: number, tile: LookTile }>
+  _stepsFromLastSite?: number
+  readonly directionPriorities: number[]
+  readonly isCarryingEnergy: boolean
+  readonly isHarvesting: boolean
+  readonly isUpgrading: boolean
+  readonly nearbyController?: Controller
+  readonly nearbySource?: Source
+  readonly nearbySpawn?: Spawn
+  readonly nearbyTiles: Array<{ dir: number, tile: LookTile }>
+  currentDepositPheromone?: string
+  currentSearchPheromone: string
+  isSearching: boolean
+  lastDirection?: number
+  lastMoveWasSuccessful: boolean
+  lastPheromoneDepositAmount: number
+  stepsFromLastSite: number
+  run(): void
+  depositPheromone(): number
+  getSearchPheromoneDirection(): number
+  searchMove(): boolean
+}
+
 // --- Properties ---
 
 Object.defineProperty(Creep.prototype, 'isCarryingEnergy', {
@@ -290,6 +327,7 @@ Creep.prototype.run = function(this: Creep) {
     const spawnFull = (this.carry.energy || 0) + this.nearbySpawn.energy > this.nearbySpawn.energyCapacity
     this.currentSearchPheromone = spawnFull ? 'controller' : 'energy'
     this.currentDepositPheromone = 'home'
+    this.lastDirection = undefined
     this.isSearching = true
   }
 
@@ -342,15 +380,15 @@ Creep.prototype.depositPheromone = function(this: Creep): number {
 
 Creep.prototype.getSearchPheromoneDirection = function(this: Creep): number {
   const walkableTiles = _.filter(this.nearbyTiles, ({ dir, tile }) =>
-    this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(this.isSearching ? Math.random() < 0.3 : true)
+    this.directionPriorities.indexOf(dir) !== -1 && tile.isWalkable(this.isSearching ? Math.random() < 0.33 : true)
   ).sort((a, b) => this.directionPriorities.indexOf(a.dir) - this.directionPriorities.indexOf(b.dir))
   const dirLevels = _.map(walkableTiles, ({ dir, tile }) => {
     const searchPheromoneLevel = tile.pheromones[this.currentSearchPheromone]
     const depositPheromoneLevel = this.currentDepositPheromone !== undefined ?
       tile.pheromones[this.currentDepositPheromone] : 0
-    return { dir, level: (searchPheromoneLevel * 3) - depositPheromoneLevel }
+    return { dir, level: depositPheromoneLevel - (searchPheromoneLevel * 2) }
   })
-  const result = _.max(dirLevels, ({ level }) => level)
+  const result = _.min(dirLevels, ({ level }) => level)
   return result.dir
 }
 
